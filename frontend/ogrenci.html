@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Teknik Üniversitesi | Öğrenci Paneli</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --navy: #0a1f44;
+            --gold: #ffc107;
+            --gold-dim: rgba(255,193,7,0.15);
+            --cream: #eef2f7;
+            --cream-dark: #dce2eb;
+            --text: #0d1b2a;
+            --muted: #7a93a8;
+            --white: #fff;
+            --shadow: 0 20px 60px rgba(10,31,68,0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+        }
+        .container { max-width: 1120px; margin: 0 auto; }
+        
+        .panel-header {
+            background: var(--navy);
+            border-radius: 20px 20px 0 0;
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .panel-greeting { font-size: 1.2rem; color: white; font-weight: 600; }
+        .panel-meta { font-size: 0.7rem; color: rgba(255,255,255,0.45); margin-top: 3px; }
+        .logout-btn {
+            background: rgba(255,193,7,0.15);
+            border: 1px solid rgba(255,193,7,0.3);
+            color: #ffc107;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        .panel-body {
+            background: white;
+            border-radius: 0 0 20px 20px;
+            box-shadow: var(--shadow);
+            padding: 1.8rem;
+        }
+        .cards-grid { display: grid; grid-template-columns: 280px 1fr; gap: 1.5rem; }
+        .info-card {
+            background: var(--cream);
+            border-radius: 16px;
+            padding: 1.2rem;
+        }
+        .info-card-title { font-size: 0.7rem; letter-spacing: 2px; color: var(--muted); margin-bottom: 1rem; display: flex; align-items: center; gap: 6px; }
+        .info-card-title i { color: var(--gold); }
+        .info-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e2ddd4; font-size: 0.8rem; }
+        .gpa-display { background: var(--navy); border-radius: 16px; padding: 1rem; text-align: center; margin-top: 1rem; }
+        .gpa-number { font-size: 2rem; font-weight: 700; color: var(--gold); }
+        .gpa-label { font-size: 0.7rem; color: rgba(255,255,255,0.6); }
+        .grades-card { background: var(--cream); border-radius: 16px; padding: 1.2rem; margin-bottom: 1rem; }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        .data-table th { text-align: left; padding: 0.5rem; border-bottom: 2px solid #e2ddd4; color: var(--muted); font-size: 0.7rem; }
+        .data-table td { padding: 0.5rem; border-bottom: 1px solid #e2ddd4; }
+        .grade-badge { padding: 0.2rem 0.5rem; border-radius: 40px; font-size: 0.7rem; font-weight: 700; }
+        .grade-ba { background: rgba(34,197,94,0.1); color: #16a34a; }
+        .grade-bb { background: rgba(59,130,246,0.1); color: #2563eb; }
+        .grade-cb { background: rgba(234,179,8,0.1); color: #ca8a04; }
+        .att-ok { color: #16a34a; font-weight: 600; }
+        .att-warn { color: #d97706; font-weight: 600; }
+        
+        @media (max-width: 800px) { .cards-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="panel-header">
+        <div>
+            <div class="panel-greeting">Hoş Geldiniz, <span id="ogrenciAdSoyad"></span></div>
+            <div class="panel-meta"><span id="ogrenciNoGoster"></span> • <span id="ogrenciBolumGoster"></span></div>
+        </div>
+        <button class="logout-btn" onclick="cikisYap()"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</button>
+    </div>
+    <div class="panel-body">
+        <div class="cards-grid">
+            <div>
+                <div class="info-card">
+                    <div class="info-card-title"><i class="fas fa-id-card"></i> Öğrenci Bilgileri</div>
+                    <div class="info-row"><span>Ad Soyad</span><span id="adSoyadDetay">-</span></div>
+                    <div class="info-row"><span>Öğrenci No</span><span id="noDetay">-</span></div>
+                    <div class="info-row"><span>Fakülte</span><span id="fakulteDetay">-</span></div>
+                    <div class="info-row"><span>Bölüm</span><span id="bolumDetay">-</span></div>
+                    <div class="info-row"><span>Sınıf</span><span id="sinifDetay">-</span></div>
+                    <div class="info-row"><span>Danışman</span><span>Doç. Dr. Mehmet DEMİR</span></div>
+                </div>
+                <div class="gpa-display">
+                    <div class="gpa-number" id="gnoDeger">3.24</div>
+                    <div class="gpa-label">Genel Not Ortalaması / 4.00</div>
+                </div>
+            </div>
+            <div>
+                <div class="grades-card">
+                    <div class="info-card-title"><i class="fas fa-chart-bar"></i> Dersler ve Notlar</div>
+                    <table class="data-table">
+                        <thead><tr><th>Ders</th><th>AKTS</th><th>Vize</th><th>Final</th><th>Harf</th></tr></thead>
+                        <tbody id="dersTableBody"></tbody>
+                    </table>
+                </div>
+                <div class="grades-card">
+                    <div class="info-card-title"><i class="fas fa-calendar-check"></i> Devamsızlık</div>
+                    <table class="data-table">
+                        <thead><tr><th>Ders</th><th>Devamsızlık</th><th>Durum</th></tr></thead>
+                        <tbody id="devamsizlikTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function cikisYap() {
+        sessionStorage.removeItem('obs_user');
+        window.location.href = 'index.html';
+    }
+
+    let currentUser = JSON.parse(sessionStorage.getItem('obs_user') || '{}');
+    if (!currentUser || currentUser.rol !== 'ogrenci') {
+        window.location.href = 'index.html';
+    }
+
+    let tumOgrenciler = JSON.parse(localStorage.getItem('MÜOS_Sunucu_Ogrenciler') || '[]');
+    let ogrenci = tumOgrenciler.find(o => o.no == currentUser.no);
+
+    if (!ogrenci) {
+        alert("Öğrenci bilgileri bulunamadı!");
+        window.location.href = 'index.html';
+    }
+
+    document.getElementById('ogrenciAdSoyad').innerText = ogrenci.tamAd;
+    document.getElementById('ogrenciNoGoster').innerText = "No: " + ogrenci.no;
+    document.getElementById('ogrenciBolumGoster').innerText = ogrenci.bolum;
+    document.getElementById('adSoyadDetay').innerText = ogrenci.tamAd;
+    document.getElementById('noDetay').innerText = ogrenci.no;
+    document.getElementById('fakulteDetay').innerText = ogrenci.fakulte || "Teknoloji Fakültesi";
+    document.getElementById('bolumDetay').innerText = ogrenci.bolum;
+    document.getElementById('sinifDetay').innerText = ogrenci.sinif;
+    document.getElementById('gnoDeger').innerText = ogrenci.gno;
+
+    let notlar = JSON.parse(localStorage.getItem('MÜOS_Sunucu_Notlar') || '{}');
+    
+    const dersler = [
+        { id:1, ad:"Programlama Temelleri", akts:6 },
+        { id:2, ad:"Nesne Tabanlı Programlama", akts:5 },
+        { id:3, ad:"Web Tasarımı", akts:5 }
+    ];
+    
+    function notHarf(ortalama) {
+        if (ortalama >= 90) return 'AA';
+        if (ortalama >= 85) return 'BA';
+        if (ortalama >= 80) return 'BB';
+        if (ortalama >= 75) return 'CB';
+        if (ortalama >= 65) return 'CC';
+        return 'FF';
+    }
+    
+    function notRenk(harf) {
+        if (harf === 'AA' || harf === 'BA') return 'grade-ba';
+        if (harf === 'BB') return 'grade-bb';
+        return 'grade-cb';
+    }
+    
+    function dersleriGoster() {
+        let html = '';
+        for (let ders of dersler) {
+            let n = notlar[`${ders.id}_${currentUser.no}`] || {};
+            let vize = n.vize !== undefined ? n.vize : '—';
+            let final = n.final !== undefined ? n.final : '—';
+            let ortalama = '—';
+            let harf = '';
+            let renk = 'grade-cb';
+            
+            if (n.vize !== undefined && n.final !== undefined) {
+                ortalama = (n.vize * 0.4 + n.final * 0.6).toFixed(1);
+                harf = notHarf(parseFloat(ortalama));
+                renk = notRenk(harf);
+            }
+            
+            html += `<tr>
+                        <td>${ders.ad}</td>
+                        <td>${ders.akts}</td>
+                        <td>${vize}</td>
+                        <td>${final}</td>
+                        <td><span class="grade-badge ${renk}">${harf}</span></td>
+                    </tr>`;
+        }
+        document.getElementById('dersTableBody').innerHTML = html;
+    }
+    
+    let devamsizliklar = JSON.parse(localStorage.getItem('MÜOS_Sunucu_Devamsizlik') || '{}');
+    
+    function devamsizlikGoster() {
+        let html = '';
+        for (let ders of dersler) {
+            let devam = devamsizliklar[`${ders.id}_${currentUser.no}`] || 0;
+            let oran = (devam / 42 * 100).toFixed(1);
+            let durum = oran >= 30 ? '<span class="att-warn">⚠ Dikkat</span>' : '<span class="att-ok">✓ Yeterli</span>';
+            html += `<tr>
+                        <td>${ders.ad}</td>
+                        <td>${devam}/42 (%${oran})</td>
+                        <td>${durum}</td>
+                    </tr>`;
+        }
+        document.getElementById('devamsizlikTableBody').innerHTML = html;
+    }
+    
+    dersleriGoster();
+    devamsizlikGoster();
+</script>
+</body>
+</html>

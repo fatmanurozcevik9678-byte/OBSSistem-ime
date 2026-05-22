@@ -1,0 +1,6 @@
+@OBS_Backend_HostAddress = http://localhost:5235
+
+GET {{OBS_Backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

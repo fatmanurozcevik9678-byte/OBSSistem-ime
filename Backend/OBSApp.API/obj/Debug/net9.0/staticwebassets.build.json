@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "JvQCwLHus88aRVQ5PerHoeeH5vYHgyqqxkCgZgUHWa8=",
+  "Source": "OBSApp.API",
+  "BasePath": "_content/OBSApp.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

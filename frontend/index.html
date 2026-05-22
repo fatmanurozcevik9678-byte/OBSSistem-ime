@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Teknik Üniversitesi | Öğrenci Bilgi Sistemi</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --navy: #0a1f44;
+            --gold: #ffc107;
+            --gold-dim: rgba(255,193,7,0.15);
+            --cream: #eef2f7;
+            --cream-dark: #dce2eb;
+            --text: #0d1b2a;
+            --muted: #7a93a8;
+            --white: #fff;
+            --shadow: 0 20px 60px rgba(10,31,68,0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        .shell {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            max-width: 1000px;
+            min-height: 600px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            animation: up .5s ease;
+        }
+        @keyframes up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .left {
+            background: var(--navy);
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .crest {
+            width: 50px; height: 50px;
+            background: var(--gold-dim);
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        .crest i { color: var(--gold); font-size: 1.2rem; }
+        .univ-label { font-size: .7rem; color: var(--gold); letter-spacing: 2px; margin-bottom: .4rem; }
+        .univ-name { font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: .7rem; }
+        .univ-sub { font-size: .8rem; color: rgba(255,255,255,.5); }
+        .type-tabs {
+            display: flex;
+            gap: .3rem;
+            margin-bottom: 1.2rem;
+            background: rgba(255,255,255,.06);
+            padding: 3px;
+            border-radius: 10px;
+        }
+        .ttab {
+            flex: 1;
+            font-size: .7rem;
+            font-weight: 600;
+            color: rgba(255,255,255,.4);
+            background: transparent;
+            border: none;
+            padding: .5rem;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+        .ttab.active {
+            background: rgba(255,193,7,0.2);
+            color: var(--gold);
+        }
+        .flabel {
+            font-size: .7rem;
+            color: rgba(255,255,255,.4);
+            display: block;
+            margin-bottom: .4rem;
+            letter-spacing: 1px;
+        }
+        .finput-w {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        .finput-w i {
+            position: absolute;
+            left: .9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold);
+        }
+        .finput {
+            width: 100%;
+            padding: .75rem 1rem .75rem 2.4rem;
+            background: rgba(255,255,255,.07);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 10px;
+            color: #fff;
+            outline: none;
+        }
+        .finput:focus { border-color: rgba(255,193,7,0.5); }
+        .login-btn {
+            width: 100%;
+            padding: .8rem;
+            background: var(--gold);
+            color: var(--navy);
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: .5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .login-btn:hover { background: #e0a800; }
+        .ybadge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: .3rem .8rem;
+            background: rgba(255,193,7,0.1);
+            border-radius: 40px;
+            font-size: .7rem;
+            color: rgba(255,193,7,0.8);
+            margin-top: 1rem;
+        }
+        .right {
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+        .rhead {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid var(--cream-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .rhead h3 { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .rhead h3 i { color: var(--gold); }
+        .ann-count {
+            background: var(--gold-dim);
+            padding: .2rem .6rem;
+            border-radius: 40px;
+            font-size: .7rem;
+            color: #b58600;
+        }
+        .ann-list { flex: 1; overflow-y: auto; max-height: 380px; padding: 0.5rem; }
+        .ann-list::-webkit-scrollbar { width: 6px; }
+        .ann-list::-webkit-scrollbar-thumb { background: var(--cream-dark); border-radius: 10px; }
+        .ann-item {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            display: flex;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+        .ann-item:hover { 
+            background: #fff; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
+            border-color: var(--cream-dark);
+            transform: translateY(-2px);
+        }
+        .ann-icon-wrap {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .ann-content { flex: 1; }
+        .ann-header { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+        .ann-title { font-size: .9rem; font-weight: 600; margin-bottom: 6px; color: var(--text); line-height: 1.3; }
+        .ann-date { font-size: .75rem; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+        .ann-tag { 
+            font-size: .6rem; 
+            padding: .2rem .6rem; 
+            border-radius: 6px; 
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .ann-new-badge {
+            background: #ef4444;
+            color: white;
+            font-size: 0.55rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 800;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        /* Category Styles */
+        .cat-uyari { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .ann-icon-wrap.cat-uyari { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .cat-akademik { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .ann-icon-wrap.cat-akademik { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .cat-idari { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+        .ann-icon-wrap.cat-idari { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+        .cat-etkinlik { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .ann-icon-wrap.cat-etkinlik { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .qlinks {
+            padding: .8rem 1.5rem;
+            border-top: 1px solid var(--cream-dark);
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            background: var(--cream);
+        }
+        .qchip {
+            background: #fff;
+            border: 1px solid var(--cream-dark);
+            border-radius: 40px;
+            padding: .3rem .8rem;
+            font-size: .7rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            color: #3d5166;
+        }
+        .qchip:hover { border-color: var(--gold); color: #b58600; background: var(--gold-dim); }
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 31, 68, 0.6);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal.open { 
+            display: flex; 
+            opacity: 1;
+        }
+        .mbox {
+            background: #fff;
+            border-radius: 24px;
+            max-width: 450px;
+            width: 90%;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: scale(0.95) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal.open .mbox { transform: scale(1) translateY(0); }
+        .m-header-banner {
+            padding: 2rem 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .m-header-banner i { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .m-header-banner.cat-uyari { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .m-header-banner.cat-akademik { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .m-header-banner.cat-idari { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+        .m-header-banner.cat-etkinlik { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .m-body { padding: 1.5rem 2rem 2rem; }
+        .m-title { font-size: 1.25rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; text-align: center; line-height: 1.4; }
+        .m-meta { display: flex; justify-content: center; gap: 15px; font-size: 0.8rem; color: var(--muted); margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--cream-dark); }
+        .m-text { color: #4a5568; font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; text-align: center; }
+        .mbox-form { padding: 2rem; text-align: center; }
+        .mbox-icon { width: 60px; height: 60px; background: var(--gold-dim); color: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 1.5rem; }
+        .mbox-form h3 { font-size: 1.3rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; }
+        .mbox-form p { font-size: 0.9rem; color: var(--muted); margin-bottom: 1.5rem; }
+        .minput-w { position: relative; margin-bottom: 1.5rem; }
+        .minput-w i { position: absolute; left: 1.2rem; top: 50%; transform: translateY(-50%); color: var(--muted); }
+        .minput { width: 100%; padding: 1rem 1rem 1rem 2.8rem; border: 2px solid var(--cream-dark); border-radius: 12px; font-size: 0.95rem; outline: none; transition: all 0.2s; color: var(--navy); font-weight: 500; }
+        .minput:focus { border-color: var(--gold); box-shadow: 0 0 0 4px var(--gold-dim); }
+        .m-buttons { display: flex; flex-direction: column; gap: 10px; }
+        .btn-primary { background: var(--gold); color: var(--navy); border: none; padding: 0.9rem; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary:hover { background: #e0a800; transform: translateY(-2px); }
+        .btn-secondary { background: var(--cream); color: var(--text); border: none; padding: 0.9rem; border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+        .btn-secondary:hover { background: var(--cream-dark); }
+        @media (max-width: 780px) { .shell { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="shell">
+    <div class="left">
+        <div class="brand">
+            <div class="crest"><i class="fas fa-university"></i></div>
+            <div class="univ-label">NOVA TEKNİK ÜNİVERSİTESİ</div>
+            <div class="univ-name">Öğrenci Bilgi<br>Sistemi</div>
+            <div class="univ-sub">Numaranız ve şifrenizle giriş yapın</div>
+        </div>
+        <div>
+            <div class="type-tabs">
+                <button class="ttab active" onclick="setTip('ogrenci',this)"><i class="fas fa-user-graduate"></i> Öğrenci</button>
+                <button class="ttab" onclick="setTip('ogretmen',this)"><i class="fas fa-chalkboard-user"></i> Öğretmen</button>
+                <button class="ttab" onclick="setTip('isler',this)"><i class="fas fa-building"></i> Öğr.İşleri</button>
+            </div>
+            <label class="flabel">Numara</label>
+            <div class="finput-w">
+                <i class="fas fa-id-badge"></i>
+                <input class="finput" type="text" id="loginNo" placeholder="Numaranız">
+            </div>
+            <label class="flabel">Şifre</label>
+            <div class="finput-w">
+                <i class="fas fa-lock"></i>
+                <input class="finput" type="password" id="loginSifre" placeholder="Şifreniz">
+            </div>
+            <button class="login-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Giriş Yap</button>
+            <div class="ybadge"><i class="fas fa-circle-dot"></i> 2025-2026 Akademik Yılı</div>
+        </div>
+    </div>
+
+    <div class="right">
+        <div class="rhead">
+            <h3><i class="fas fa-bullhorn"></i> Duyurular</h3>
+            <span class="ann-count">5 yeni</span>
+        </div>
+        <div class="ann-list" id="annList"></div>
+        <div class="qlinks">
+            <a href="ders-programi.html" class="qchip"><i class="fas fa-calendar-week"></i> Ders Programı</a>
+            <button class="qchip" id="ogrenciIsleriBtn"><i class="fas fa-building"></i> Öğrenci İşleri</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="annModal">
+    <div class="mbox">
+        <div class="m-header-banner" id="annMBanner">
+            <i id="annMIcon" class="fas fa-bullhorn"></i>
+            <span class="ann-tag" id="annMTag" style="background: white; margin-top: 5px;">KATEGORİ</span>
+        </div>
+        <div class="m-body">
+            <div class="m-title" id="annMTitle">Başlık</div>
+            <div class="m-meta">
+                <span><i class="far fa-calendar-alt"></i> <span id="annMDate">Tarih</span></span>
+            </div>
+            <div class="m-text" id="annMBody">İçerik</div>
+            <div class="m-buttons">
+                <button class="btn-secondary" onclick="closeModal('annModal')">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="forgotModal">
+    <div class="mbox mbox-form">
+        <div class="mbox-icon"><i class="fas fa-key"></i></div>
+        <h3>Şifremi Unuttum</h3>
+        <p>Öğrenci numaranızı girin, geçici şifre hesabınıza tanımlanacaktır.</p>
+        
+        <div class="minput-w">
+            <i class="fas fa-id-card"></i>
+            <input class="minput" type="text" id="forgotNo" placeholder="Öğrenci No (1001-1080)">
+        </div>
+        
+        <div class="m-buttons">
+            <button class="btn-primary" id="resetBtn"><i class="fas fa-paper-plane"></i> Geçici Şifre Gönder</button>
+            <button class="btn-secondary" onclick="closeModal('forgotModal')">İptal</button>
+        </div>
+    </div>
+</div>
+
+<script>
+async function hashSifre(sifre) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(sifre);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+}
+
+const duyurular = [
+    { id:1, baslik:"ÖNEMLİ YASAL UYARI: Banka Hesabı ve Dijital Cüzdan", tarih:"17 Mayıs 2026", kategori:"uyari", yeni:true, icon:"fas fa-exclamation-triangle",
+      icerik:"Banka hesaplarının veya dijital cüzdanların başkalarına kullandırılması suçtur. Hesabınızı kimseyle paylaşmayın!" },
+    { id:2, baslik:"2025-2026 Akademik Takvimi Açıklandı", tarih:"12 Mayıs 2026", kategori:"akademik", yeni:true, icon:"fas fa-calendar-days",
+      icerik:"Güz Dönemi Kayıt: 15-19 Eylül, Vize: 17-23 Kasım, Bahar Dönemi Kayıt: 09-13 Şubat" },
+    { id:3, baslik:"Eğitim Bursu Başvuruları", tarih:"02 Mayıs 2026", kategori:"idari", yeni:true, icon:"fas fa-hand-holding-dollar",
+      icerik:"Burs başvuruları 15 Haziran - 15 Temmuz arasında. Şartlar: GNO en az 2.50" },
+    { id:4, baslik:"Devamsızlık Uyarısı", tarih:"22 Nisan 2026", kategori:"uyari", yeni:true, icon:"fas fa-user-clock",
+      icerik:"Devamsızlık sınırı teorik derslerde %30, uygulamada %20" },
+    { id:5, baslik:"İngilizce Konuşma Pratikleri", tarih:"03 Mart 2026", kategori:"etkinlik", yeni:false, icon:"fas fa-language",
+      icerik:"Her Çarşamba 15:00-17:00, D-Blok 203" }
+];
+
+const sabitOgrenciler = [];
+const erkekIsim = ["Ahmet","Mehmet","Ali","Mustafa","Hasan","Emre","Burak","Can"];
+const kizIsim = ["Ayşe","Fatma","Zeynep","Elif","Merve","Selin","Melis","İrem"];
+const soyadlar = ["Yılmaz","Demir","Çelik","Kaya","Aydın","Öztürk","Şahin","Koç"];
+const bolumler = ["Bilgisayar Programcılığı","Web Tasarımı","Yapay Zeka","Mobil Uygulama","Ağ Sistemleri","Siber Güvenlik","Oyun Geliştirme","Veri Bilimi"];
+
+function rastgeleSec(d) { return d[Math.floor(Math.random()*d.length)]; }
+
+for(let i=1001; i<=1080; i++) {
+    let c = Math.random()>.5?"erkek":"kız";
+    let isim = c==="erkek"?rastgeleSec(erkekIsim):rastgeleSec(kizIsim);
+    sabitOgrenciler.push({ no:i, tamAd:isim+" "+rastgeleSec(soyadlar), bolum:rastgeleSec(bolumler), sinif:(Math.floor(Math.random()*4)+1)+". Sınıf", fakulte:"Teknoloji Fakültesi" });
+}
+sabitOgrenciler[0] = {no:1001, tamAd:"Ahmet Yılmaz", bolum:"Bilgisayar Programcılığı", sinif:"2. Sınıf", fakulte:"Teknoloji Fakültesi"};
+sabitOgrenciler[1] = {no:1002, tamAd:"Ayşe Demir", bolum:"Bilgisayar Programcılığı", sinif:"2. Sınıf", fakulte:"Teknoloji Fakültesi"};
+
+const tumOgrenciler = sabitOgrenciler.map(o => ({
+    ...o,
+    gno: (Math.random()*2.2+1.8).toFixed(2),
+    devam: Math.floor(Math.random()*12),
+    aktif: true,
+    uni: "Nova Teknik Üniversitesi",
+    Sifre: "03AC674216F3E15C761EE1A5E255F067953623C8B388B4459E13F978D7C846F4"
+}));
+
+const sabitOgretmenler = [
+    { no:2001, ad:"Mehmet", soyad:"DEMİR", unvan:"Doç. Dr.", bolum:"Bilgisayar Programcılığı", Sifre: "F8638B979B2F4F793DDB6DBD197E0EE25A7A6EA32B0AE22F5E3C5D119D839E75" },
+    { no:2002, ad:"Ali", soyad:"YILDIZ", unvan:"Dr. Öğr. Üyesi", bolum:"Web Tasarımı", Sifre: "F8638B979B2F4F793DDB6DBD197E0EE25A7A6EA32B0AE22F5E3C5D119D839E75" }
+];
+
+const sabitMemurlar = [
+    { no:3001, ad:"Ayşe", soyad:"YILMAZ", birim:"Öğrenci İşleri", Sifre: "DB2E7F1BD5AB9968AE76199B7CC74795CA7404D5A08D78567715CE532F9D2669" }
+];
+
+localStorage.setItem('MÜOS_Sunucu_Ogrenciler', JSON.stringify(tumOgrenciler));
+localStorage.setItem('MÜOS_Sunucu_Ogretmenler', JSON.stringify(sabitOgretmenler));
+localStorage.setItem('MÜOS_Sunucu_Memurlar', JSON.stringify(sabitMemurlar));
+
+document.getElementById('annList').innerHTML = duyurular.map(d=>`
+    <div class="ann-item" onclick="openDuyuru(${d.id})">
+        <div class="ann-icon-wrap cat-${d.kategori}">
+            <i class="${d.icon}"></i>
+        </div>
+        <div class="ann-content">
+            <div class="ann-header">
+                <span class="ann-tag cat-${d.kategori}">${d.kategori.toUpperCase()}</span>
+                ${d.yeni ? '<span class="ann-new-badge">YENİ</span>' : ''}
+            </div>
+            <div class="ann-title">${d.baslik}</div>
+            <div class="ann-date"><i class="far fa-calendar-alt"></i> ${d.tarih}</div>
+        </div>
+    </div>
+`).join('');
+
+window.openDuyuru = function(id){
+    const d=duyurular.find(x=>x.id===id);
+    document.getElementById('annMTitle').innerText=d.baslik;
+    document.getElementById('annMBody').innerText=d.icerik;
+    document.getElementById('annMDate').innerText=d.tarih;
+    
+    const banner = document.getElementById('annMBanner');
+    banner.className = 'm-header-banner cat-' + d.kategori;
+    
+    document.getElementById('annMIcon').className = d.icon;
+    
+    const tag = document.getElementById('annMTag');
+    tag.innerText = d.kategori.toUpperCase();
+    tag.style.color = 'inherit';
+    
+    openModal('annModal');
+}
+
+window.openModal = function(id){ document.getElementById(id).classList.add('open'); }
+window.closeModal = function(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+
+let aktifTip='ogrenci';
+window.setTip = function(tip,btn){
+    aktifTip=tip;
+    document.querySelectorAll('.ttab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+document.getElementById('ogrenciIsleriBtn').onclick=()=>alert("📞 Öğrenci İşleri: 0(246) 123 45 67");
+let forgotBtn = document.getElementById('forgotBtn'); if(forgotBtn) forgotBtn.onclick=()=>openModal('forgotModal');
+
+document.getElementById('loginBtn').onclick = async () => {
+    const no = parseInt(document.getElementById('loginNo').value);
+    const sifre = document.getElementById('loginSifre').value;
+    if(isNaN(no)){ alert("Geçerli numara girin!"); return; }
+
+    if(aktifTip === 'ogrenci'){
+        const ogr = JSON.parse(localStorage.getItem('MÜOS_Sunucu_Ogrenciler')).find(o=>o.no===no);
+        if(ogr){
+            if(ogr.Sifre !== await hashSifre(sifre)){ alert("Şifre hatalı! (1234)"); return; }
+            sessionStorage.setItem('obs_user', JSON.stringify({rol:'ogrenci', no, tamAd:ogr.tamAd, bolum:ogr.bolum, gno:ogr.gno, sinif:ogr.sinif}));
+            window.location.href='ogrenci.html';
+        } else alert("Öğrenci bulunamadı! (1001-1080)");
+    }
+    else if(aktifTip === 'ogretmen'){
+        if(no<2001||no>2002){ alert("Geçersiz öğretmen no! (2001-2002)"); return; }
+        const hoca = JSON.parse(localStorage.getItem('MÜOS_Sunucu_Ogretmenler')).find(h=>h.no===no);
+        if(hoca && hoca.Sifre === await hashSifre(sifre)){
+            sessionStorage.setItem('obs_user', JSON.stringify({rol:'hoca', no, ad:hoca.ad, soyad:hoca.soyad, unvan:hoca.unvan, bolum:hoca.bolum}));
+            window.location.href='ogretmen.html';
+        } else alert("Şifre hatalı! (5678)");
+    }
+    else if(aktifTip === 'isler'){
+        if(no<3001||no>3001){ alert("Geçersiz numara! (3001)"); return; }
+        const memur = JSON.parse(localStorage.getItem('MÜOS_Sunucu_Memurlar')).find(m=>m.no===no);
+        if(memur && memur.Sifre === await hashSifre(sifre)){
+            sessionStorage.setItem('obs_user', JSON.stringify({rol:'memur', no, ad:memur.ad, soyad:memur.soyad, birim:memur.birim}));
+            window.location.href='ogrenci-isleri.html';
+        } else alert("Şifre hatalı! (4567)");
+    }
+};
+
+document.getElementById('resetBtn').onclick = async () => {
+    const n = parseInt(document.getElementById('forgotNo').value);
+    if(n>=1001 && n<=1080){
+        const ogr = JSON.parse(localStorage.getItem('MÜOS_Sunucu_Ogrenciler')).find(o=>o.no===n);
+        if(ogr){
+            ogr.Sifre = await hashSifre("1234");
+            localStorage.setItem('MÜOS_Sunucu_Ogrenciler', JSON.stringify(JSON.parse(localStorage.getItem('MÜOS_Sunucu_Ogrenciler')).map(o=>o.no===n?ogr:o)));
+            alert(n+" numaralı öğrenciye geçici şifre (1234) gönderildi.");
+            closeModal('forgotModal');
+        }
+    } else alert("Geçersiz numara!");
+};
+
+['loginNo','loginSifre'].forEach(id=>{
+    document.getElementById(id).addEventListener('keypress',e=>{
+        if(e.key==='Enter') document.getElementById('loginBtn').click();
+    });
+});
+</script>
+</body>
+</html>

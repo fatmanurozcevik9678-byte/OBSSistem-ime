@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\OBS_Backend.props" />
+</Project>

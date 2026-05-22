@@ -1,0 +1,6 @@
+@OBSApp.API_HostAddress = http://localhost:5225
+
+GET {{OBSApp.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

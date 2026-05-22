@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "gaII/tZ+b+BIcOxOMpzQ9tvoswFeAPwmr1aGduvgyGw=",
+  "Source": "OBS_Backend",
+  "BasePath": "_content/OBS_Backend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

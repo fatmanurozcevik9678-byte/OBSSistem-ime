@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Teknik Üniversitesi | Ders Kayıt İşlemleri</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --navy:#0a1628; --gold:#c9a84c; --gold-dim:rgba(201,168,76,0.15);
+            --cream:#f7f4ee; --cream-dark:#ede8df;
+            --text:#0d1b2a; --muted:#7a93a8; --white:#fff;
+            --shadow:0 20px 60px rgba(10,22,40,0.18);
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'DM Sans',sans-serif;background:var(--cream);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;}
+        body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 60% at 0% 0%,rgba(10,22,40,0.06),transparent 60%),radial-gradient(ellipse 50% 50% at 100% 100%,rgba(201,168,76,0.07),transparent 60%);pointer-events:none;}
+
+        .container{width:100%;max-width:700px;position:relative;z-index:1;animation:up .5s ease both;}
+        @keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+        .card{background:var(--white);border-radius:24px;padding:2.5rem;box-shadow:var(--shadow);border:1px solid rgba(10,22,40,0.03);}
+        
+        h1{font-family:'Playfair Display',serif;color:var(--navy);font-size:1.8rem;font-weight:700;margin-bottom:0.4rem;display:flex;align-items:center;gap:12px;}
+        h1 i{color:var(--gold);}
+        
+        .sub-info{font-size:0.85rem;color:var(--muted);margin-bottom:1.5rem;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--cream-dark);padding-bottom:1rem;}
+        .sub-info i{color:#ef4444;}
+
+        .student-strip {background:var(--cream);padding:1rem;border-radius:12px;margin-bottom:1.5rem;display:flex;justify-content:space-between;font-size:0.85rem;color:var(--text);border:1px solid var(--cream-dark);}
+        .student-strip span strong {color:var(--navy);}
+
+        .ders-listesi {margin-top:1rem;}
+        .ders-item{display:flex;justify-content:space-between;align-items:center;padding:1rem;border-bottom:1px solid var(--cream-dark);transition:0.2s;border-radius:8px;margin-bottom:0.3rem;}
+        .ders-item:hover{background:rgba(201,168,76,0.05);}
+        
+        .ders-info {display:flex;flex-direction:column;gap:3px;}
+        .ders-kod-ad {font-size:0.92rem;font-weight:600;color:var(--text);}
+        .ders-detay {font-size:0.75rem;color:var(--muted);display:flex;gap:10px;}
+        
+        .cb-container {display:block;position:relative;padding-left:35px;cursor:pointer;font-size:22px;user-select:none;}
+        .cb-container input {position:absolute;opacity:0;cursor:pointer;height:0;width:0;}
+        .checkmark {position:absolute;top:50%;transform:translateY(-50%);left:0;height:22px;width:22px;background-color:var(--cream);border:2px solid var(--cream-dark);border-radius:6px;transition:0.2s;}
+        .cb-container:hover input ~ .checkmark {border-color:var(--gold);}
+        .cb-container input:checked ~ .checkmark {background-color:var(--gold);border-color:var(--gold);}
+        .checkmark:after {content:"";position:absolute;display:none;}
+        .cb-container input:checked ~ .checkmark:after {display:block;}
+        .cb-container .checkmark:after {left:7px;top:3px;width:5px;height:10px;border:solid var(--navy);border-width:0 2.5px 2.5px 0;transform:rotate(45deg);}
+
+        .summary-bar {background:var(--navy);color:#fff;padding:1rem 1.5rem;border-radius:12px;margin-top:1.5rem;display:flex;justify-content:space-between;align-items:center;}
+        .summary-bar .kredi-text {font-size:0.85rem;opacity:0.8;}
+        .summary-bar .kredi-sayi {font-size:1.1rem;font-weight:700;color:var(--gold);}
+
+        .kayit-btn{width:100%;padding:1rem;background:var(--gold);color:var(--navy);font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:700;border:none;border-radius:12px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:1.2rem;}
+        .kayit-btn:hover{background:#ddb95a;transform:translateY(-1px);box-shadow:0 8px 25px rgba(201,168,76,0.25);}
+        
+        .btn-geri{display:inline-flex;align-items:center;gap:6px;margin-top:1.5rem;color:var(--muted);font-size:0.85rem;font-weight:500;text-decoration:none;transition:.2s;}
+        .btn-geri:hover{color:var(--navy);transform:translateX(-2px);}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h1><i class="fas fa-edit"></i> Dönem Ders Kayıt İşlemleri</h1>
+        <div class="sub-info"><i class="fas fa-clock"></i> Ders Ekle/Bırak Son Tarih: 20 Şubat 2026</div>
+        
+        <div class="student-strip">
+            <span>Öğrenci: <strong id="stAd">-</strong></span>
+            <span>Bölüm: <strong id="stBolum">-</strong></span>
+        </div>
+
+        <div class="ders-listesi" id="dersHavuzu">
+            </div>
+
+        <div class="summary-bar">
+            <span class="kredi-text"><i class="fas fa-chart-pie"></i> Seçilen Toplam AKTS Yükü:</span>
+            <span class="kredi-sayi" id="toplamAkts">0 / 30 AKTS</span>
+        </div>
+
+        <button class="kayit-btn" onclick="kaydetVeOnayla()"><i class="fas fa-cloud-upload-alt"></i> Seçilen Dersleri Kaydet ve Onaya Gönder</button>
+        
+        <a href="ogrenci-panel.html" class="btn-geri"><i class="fas fa-arrow-left"></i> Öğrenci Paneline Dön</a>
+    </div>
+</div>
+
+<script>
+    const tumDersVerileri = {
+        "Bilgisayar Programcılığı": [
+            { kod: "BIL-202", ad: "Nesne Tabanlı Programlama (C#)", akts: 6, hoca: "Öğr. Gör. Burak KOÇ" },
+            { kod: "BIL-204", ad: "Gelişmiş Web Programlama", akts: 5, hoca: "Dr. Öğr. Üyesi Elif AKMAN" },
+            { kod: "BIL-206", ad: "Veritabanı Yönetim Sistemleri II", akts: 5, hoca: "Doç. Dr. Mehmet DEMİR" },
+            { kod: "BIL-208", ad: "Mobil Uygulama Geliştirme", akts: 5, hoca: "Öğr. Gör. Emre ARSLAN" },
+            { kod: "BIL-210", ad: "Sistem Analizi ve Tasarımı", akts: 4, hoca: "Prof. Dr. Mustafa ÇELİK" },
+            { kod: "BIL-212", ad: "Yazılım Tasarım Desenleri", akts: 5, hoca: "Dr. Öğr. Üyesi Zeynep KAYA" }
+        ],
+        "Mekatronik": [
+            { kod: "MEK-202", ad: "Robotik Sistemler ve Tasarım", akts: 6, hoca: "Doç. Dr. Selin POLAT" },
+            { kod: "MEK-204", ad: "Mikrodenetleyiciler", akts: 5, hoca: "Öğr. Gör. Ali YILDIZ" },
+            { kod: "MEK-206", ad: "Sensörler ve Transdüserler", akts: 5, hoca: "Prof. Dr. Mustafa ÇELİK" },
+            { kod: "MEK-208", ad: "Hidrolik & Pnömatik Sistemler", akts: 5, hoca: "Doç. Dr. Mehmet DEMİR" },
+            { kod: "MEK-210", ad: "Sistem Dinamiği ve Kontrol", akts: 5, hoca: "Dr. Öğr. Üyesi Elif AKMAN" },
+            { kod: "MEK-212", ad: "Sınai Otomasyon", akts: 4, hoca: "Öğr. Gör. Burak KOÇ" }
+        ],
+        "Dış Ticaret": [
+            { kod: "DIC-202", ad: "Uluslararası Finansman", akts: 6, hoca: "Dr. Öğr. Üyesi Zeynep KAYA" },
+            { kod: "DIC-204", ad: "Gümrük Mevzuatı ve İşlemleri", akts: 5, hoca: "Öğr. Gör. Ali YILDIZ" },
+            { kod: "DIC-206", ad: "Dış Ticarette Paket Programlar", akts: 5, hoca: "Öğr. Gör. Emre ARSLAN" },
+            { kod: "DIC-208", ad: "Küresel Pazarlama Stratejileri", akts: 5, hoca: "Doç. Dr. Selin POLAT" },
+            { kod: "DIC-210", ad: "Lojistik ve Tedarik Zinciri", akts: 5, hoca: "Prof. Dr. Mustafa ÇELİK" },
+            { kod: "DIC-212", ad: "Uluslararası Ticaret Hukuku", akts: 4, hoca: "Dr. Öğr. Üyesi Elif AKMAN" }
+        ]
+    };
+
+    const sessionUser = JSON.parse(sessionStorage.getItem("obs_user"));
+    let ogrenciBolum = "Bilgisayar Programcılığı"; 
+
+    if(sessionUser && sessionUser.rol === 'ogrenci') {
+        const tumOgrenciler = JSON.parse(localStorage.getItem('MÜOS_Sunucu_Ogrenciler') || '[]');
+        const aktifOgrenci = tumOgrenciler.find(o => o.no === sessionUser.no);
+        
+        if(aktifOgrenci) {
+            document.getElementById("stAd").innerText = aktifOgrenci.tamAd;
+            document.getElementById("stBolum").innerText = aktifOgrenci.bolum;
+            ogrenciBolum = aktifOgrenci.bolum;
+        }
+    } else {
+        alert("Lütfen önce öğrenci girişi yapınız!");
+        window.location.href = 'index.html';
+    }
+
+    const interstateDersler = tumDersVerileri[ogrenciBolum] || tumDersVerileri["Bilgisayar Programcılığı"];
+    const havuzHTML = interstateDersler.map((d, index) => `
+        <div class="ders-item">
+            <div class="ders-info">
+                <span class="ders-kod-ad">${d.kod} - ${d.ad}</span>
+                <span class="ders-detay">
+                    <span><i class="fas fa-graduation-cap"></i> ${d.hoca}</span>
+                    <span><i class="fas fa-star"></i> ${d.akts} AKTS</span>
+                </span>
+            </div>
+            <div>
+                <label class="cb-container">
+                    <input type="checkbox" class="ders-cb" data-akts="${d.akts}" onchange="hesaplaAKTS()">
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+        </div>
+    `).join('');
+
+    document.getElementById('dersHavuzu').innerHTML = havuzHTML;
+
+    function hesaplaAKTS() {
+        let toplam = 0;
+        document.querySelectorAll('.ders-cb').forEach(cb => {
+            if(cb.checked) {
+                toplam += parseInt(cb.getAttribute('data-akts'));
+            }
+        });
+        document.getElementById('toplamAkts').innerText = `${toplam} / 30 AKTS`;
+        return toplam;
+    }
+
+    function kaydetVeOnayla() {
+        const aktifKredi = hesaplaAKTS();
+        if(aktifKredi === 0) {
+            alert("Hata!\nEn az 1 ders seçimi yapmalısınız.");
+        } else if(aktifKredi > 30) {
+            alert(`Kredi Sınırı Aşıldı!\nMaksimum 30 AKTS seçebilirsiniz. Şu anki seçiminiz: ${aktifKredi} AKTS.`);
+        } else {
+            alert(`Başarılı!\nSeçtiğiniz ${aktifKredi} AKTS'lik ders kaydı sisteme kaydedildi ve akademik danışmanınızın onay havuzuna gönderildi.`);
+            window.location.href = 'ogrenci-panel.html';
+        }
+    }
+</script>
+</body>
+</html>

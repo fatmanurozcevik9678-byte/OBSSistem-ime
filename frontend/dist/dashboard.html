@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isparta Üniversitesi | Öğrenci Paneli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root{--navy:#0a1628;--gold:#c9a84c;--gold-dim:rgba(201,168,76,0.15);--cream:#f7f4ee;--cream-dark:#ede8df;--text:#0d1b2a;--muted:#7a93a8;--white:#fff;--green:#16a34a;--green-dim:rgba(22,163,74,.1);--red:#dc2626;--red-dim:rgba(220,38,38,.1);--blue:#2563eb;--blue-dim:rgba(37,99,235,.1);}
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'DM Sans',sans-serif;background:var(--cream);min-height:100vh;padding:1.5rem;}
+        @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+        .wrap{max-width:1100px;margin:0 auto;animation:up .4s ease both;}
+
+        /* HEADER */
+        .pheader{background:var(--navy);border-radius:20px 20px 0 0;padding:1.2rem 1.8rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+        .pgreeting{font-family:'Playfair Display',serif;font-size:1.25rem;color:#fff;font-weight:700;}
+        .pmeta{font-size:.72rem;color:rgba(255,255,255,.4);margin-top:3px;}
+        .rbadge{display:inline-flex;align-items:center;gap:4px;font-size:.65rem;font-weight:700;padding:.18rem .65rem;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.25);border-radius:40px;color:var(--gold);margin-left:8px;}
+        .logout-btn{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold);font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;padding:.45rem 1.1rem;border-radius:40px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px;}
+        .logout-btn:hover{background:var(--gold);color:var(--navy);}
+
+        /* BODY */
+        .pbody{background:#fff;border-radius:0 0 20px 20px;box-shadow:0 20px 60px rgba(10,22,40,.15);padding:1.8rem;}
+
+        /* NAV SEKMELERİ */
+        .pnav{display:flex;gap:.25rem;border-bottom:2px solid var(--cream-dark);margin-bottom:1.8rem;overflow-x:auto;}
+        .ntab{font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:600;color:var(--muted);background:transparent;border:none;padding:.65rem 1rem;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;display:flex;align-items:center;gap:6px;transition:.2s;}
+        .ntab:hover{color:var(--text);}
+        .ntab.active{color:var(--navy);border-bottom-color:var(--gold);}
+        .tcon{display:none;}.tcon.active{display:block;}
+
+        /* KARTLAR */
+        .grid2{display:grid;grid-template-columns:270px 1fr;gap:1.5rem;}
+        .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;}
+        .scard{background:var(--cream);border-radius:14px;padding:1.1rem 1.3rem;border:1px solid var(--cream-dark);display:flex;align-items:center;gap:12px;}
+        .sicon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+        .si-gold{background:var(--gold-dim);color:var(--gold);}
+        .si-green{background:var(--green-dim);color:var(--green);}
+        .si-blue{background:var(--blue-dim);color:var(--blue);}
+        .si-red{background:var(--red-dim);color:var(--red);}
+        .slabel{font-size:.68rem;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:1px;}
+        .sval{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--text);line-height:1;}
+        .card{background:var(--cream);border-radius:14px;padding:1.3rem;border:1px solid var(--cream-dark);}
+        .ctitle{font-size:.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:1.1rem;display:flex;align-items:center;gap:7px;}
+        .ctitle i{color:var(--gold);}
+        .irow{display:flex;justify-content:space-between;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--cream-dark);font-size:.83rem;}
+        .irow:last-child{border-bottom:none;}
+        .ilabel{color:var(--muted);font-weight:500;}
+        .ival{color:var(--text);font-weight:600;text-align:right;max-width:58%;}
+        .gpa-box{background:var(--navy);border-radius:14px;padding:1.1rem;text-align:center;margin-top:1rem;}
+        .gpa-n{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:800;color:var(--gold);line-height:1;}
+        .gpa-l{font-size:.68rem;color:rgba(255,255,255,.4);margin-top:3px;letter-spacing:1px;text-transform:uppercase;}
+
+        /* TABLO */
+        .tcard{background:var(--cream);border-radius:14px;padding:1.3rem;border:1px solid var(--cream-dark);}
+        .twrap{overflow-x:auto;}
+        table{width:100%;border-collapse:collapse;font-size:.82rem;}
+        thead th{font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 .75rem .75rem;border-bottom:2px solid var(--cream-dark);text-align:left;white-space:nowrap;}
+        tbody td{padding:.7rem .75rem;border-bottom:1px solid var(--cream-dark);color:var(--text);}
+        tbody tr:last-child td{border-bottom:none;}
+        tbody tr:hover{background:rgba(201,168,76,.04);}
+        .gbadge{display:inline-block;padding:.18rem .6rem;border-radius:40px;font-weight:700;font-size:.74rem;}
+        .gAA{background:rgba(22,163,74,.15);color:#15803d;}
+        .gBA{background:var(--green-dim);color:var(--green);}
+        .gBB{background:var(--blue-dim);color:var(--blue);}
+        .gCB{background:rgba(234,179,8,.12);color:#ca8a04;}
+        .gCC{background:rgba(234,179,8,.08);color:#a16207;}
+        .gFF{background:var(--red-dim);color:var(--red);}
+        .att-ok{color:var(--green);font-weight:600;}
+        .att-warn{color:#d97706;font-weight:600;}
+        .att-danger{color:var(--red);font-weight:600;}
+
+        @media(max-width:800px){.grid2{grid-template-columns:1fr;}.grid3{grid-template-columns:1fr 1fr;}}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="pheader">
+        <div>
+            <div class="pgreeting">Hoş Geldiniz, <span id="hdrAd"></span><span class="rbadge"><i class="fas fa-user-graduate"></i> Öğrenci</span></div>
+            <div class="pmeta"><span id="hdrNo"></span> &nbsp;•&nbsp; <span id="hdrBolum"></span></div>
+        </div>
+        <button class="logout-btn" onclick="cikis()"><i class="fas fa-right-from-bracket"></i> Çıkış Yap</button>
+    </div>
+    <div class="pbody">
+        <div class="pnav">
+            <button class="ntab active" onclick="tab('profil',this)"><i class="fas fa-id-card"></i> Profil</button>
+            <button class="ntab" onclick="tab('notlar',this)"><i class="fas fa-chart-bar"></i> Notlar</button>
+            <button class="ntab" onclick="tab('devamsizlik',this)"><i class="fas fa-calendar-check"></i> Devamsızlık</button>
+            <button class="ntab" onclick="tab('program',this)"><i class="fas fa-calendar-week"></i> Ders Programı</button>
+        </div>
+
+        <!-- PROFİL -->
+        <div class="tcon active" id="t-profil">
+            <div class="grid2">
+                <div>
+                    <div class="card">
+                        <div class="ctitle"><i class="fas fa-id-card"></i> Kişisel Bilgiler</div>
+                        <div class="irow"><span class="ilabel">Ad Soyad</span><span class="ival" id="pAd">-</span></div>
+                        <div class="irow"><span class="ilabel">Öğrenci No</span><span class="ival" id="pNo">-</span></div>
+                        <div class="irow"><span class="ilabel">Fakülte</span><span class="ival" id="pFak">-</span></div>
+                        <div class="irow"><span class="ilabel">Bölüm</span><span class="ival" id="pBol">-</span></div>
+                        <div class="irow"><span class="ilabel">Sınıf</span><span class="ival" id="pSin">-</span></div>
+                        <div class="irow"><span class="ilabel">Danışman</span><span class="ival">Doç. Dr. M. DEMİR</span></div>
+                        <div class="irow"><span class="ilabel">Kayıt Durumu</span><span class="ival" style="color:var(--green);">✓ Aktif</span></div>
+                    </div>
+                    <div class="gpa-box"><div class="gpa-n" id="pGno">3.24</div><div class="gpa-l">Genel Not Ortalaması / 4.00</div></div>
+                </div>
+                <div>
+                    <div class="grid3">
+                        <div class="scard"><div class="sicon si-gold"><i class="fas fa-book"></i></div><div><div class="slabel">Alınan AKTS</div><div class="sval">96</div></div></div>
+                        <div class="scard"><div class="sicon si-green"><i class="fas fa-check-circle"></i></div><div><div class="slabel">Geçilen Ders</div><div class="sval">14</div></div></div>
+                        <div class="scard"><div class="sicon si-blue"><i class="fas fa-calendar"></i></div><div><div class="slabel">Bu Dönem</div><div class="sval">5</div></div></div>
+                    </div>
+                    <div class="card">
+                        <div class="ctitle"><i class="fas fa-bell"></i> Son Bildirimler</div>
+                        <div class="irow"><span>Matematik II final sonucu açıklandı</span><span style="color:var(--muted);font-size:.72rem;">2 gün önce</span></div>
+                        <div class="irow"><span>Dönem sonu sınav programı yayınlandı</span><span style="color:var(--muted);font-size:.72rem;">4 gün önce</span></div>
+                        <div class="irow"><span>Burs başvuru hatırlatması</span><span style="color:var(--muted);font-size:.72rem;">1 hafta önce</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NOTLAR -->
+        <div class="tcon" id="t-notlar">
+            <div class="tcard">
+                <div class="ctitle"><i class="fas fa-chart-bar"></i> 2025-2026 Bahar Dönemi Notları</div>
+                <div class="twrap">
+                    <table>
+                        <thead><tr><th>Kod</th><th>Ders Adı</th><th>AKTS</th><th>Vize</th><th>Final</th><th>Ort.</th><th>Harf</th><th>Durum</th></tr></thead>
+                        <tbody>
+                            <tr><td>BIL101</td><td>Programlama Temelleri</td><td>6</td><td>85</td><td>78</td><td>80.9</td><td><span class="gbadge gBB">BB</span></td><td style="color:var(--green);">✓ Geçti</td></tr>
+                            <tr><td>WEB201</td><td>Web Tasarımı</td><td>5</td><td>92</td><td>88</td><td>89.6</td><td><span class="gbadge gBA">BA</span></td><td style="color:var(--green);">✓ Geçti</td></tr>
+                            <tr><td>MAT102</td><td>Matematik II</td><td>5</td><td>70</td><td>75</td><td>73.0</td><td><span class="gbadge gCB">CB</span></td><td style="color:var(--green);">✓ Geçti</td></tr>
+                            <tr><td>VER301</td><td>Veri Yapıları</td><td>6</td><td>55</td><td>48</td><td>51.0</td><td><span class="gbadge gFF">FF</span></td><td style="color:var(--red);">✗ Kaldı</td></tr>
+                            <tr><td>AĞ201</td><td>Ağ Sistemleri</td><td>4</td><td>88</td><td>91</td><td>89.8</td><td><span class="gbadge gAA">AA</span></td><td style="color:var(--green);">✓ Geçti</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="gpa-box" style="margin-top:1.2rem;border-radius:10px;"><div class="gpa-n" id="donemGno">3.24</div><div class="gpa-l">Bu Dönem GNO / 4.00</div></div>
+            </div>
+        </div>
+
+        <!-- DEVAMSIZLIK -->
+        <div class="tcon" id="t-devamsizlik">
+            <div class="tcard">
+                <div class="ctitle"><i class="fas fa-calendar-check"></i> Devamsızlık Durumu</div>
+                <div class="twrap">
+                    <table>
+                        <thead><tr><th>Ders</th><th>Toplam</th><th>Devamsızlık</th><th>Oran</th><th>Limit</th><th>Durum</th></tr></thead>
+                        <tbody>
+                            <tr><td>Programlama Temelleri</td><td>42</td><td>4</td><td>%9.5</td><td>%33</td><td class="att-ok">✓ Yeterli</td></tr>
+                            <tr><td>Web Tasarımı</td><td>42</td><td>6</td><td>%14.2</td><td>%33</td><td class="att-ok">✓ Yeterli</td></tr>
+                            <tr><td>Matematik II</td><td>42</td><td>12</td><td>%28.5</td><td>%33</td><td class="att-warn">⚠ Dikkat</td></tr>
+                            <tr><td>Veri Yapıları</td><td>42</td><td>14</td><td>%33.3</td><td>%33</td><td class="att-danger">✗ Sınır Aşıldı</td></tr>
+                            <tr><td>Ağ Sistemleri</td><td>42</td><td>2</td><td>%4.7</td><td>%33</td><td class="att-ok">✓ Yeterli</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- DERS PROGRAMI -->
+        <div class="tcon" id="t-program">
+            <div class="tcard">
+                <div class="ctitle"><i class="fas fa-calendar-week"></i> Haftalık Ders Programı</div>
+                <div class="twrap">
+                    <table>
+                        <thead><tr><th>Gün</th><th>Saat</th><th>Ders</th><th>Yer</th><th>Öğretim Üyesi</th></tr></thead>
+                        <tbody>
+                            <tr><td>Pazartesi</td><td>09:00–11:00</td><td>Programlama Temelleri</td><td>B-101 Lab</td><td>Doç. Dr. M. DEMİR</td></tr>
+                            <tr><td>Salı</td><td>13:00–15:00</td><td>Web Tasarımı</td><td>A-204</td><td>Dr. Öğr. Üyesi A. YILDIZ</td></tr>
+                            <tr><td>Çarşamba</td><td>10:00–12:00</td><td>Matematik II</td><td>C-301</td><td>Prof. Dr. M. ÇELİK</td></tr>
+                            <tr><td>Perşembe</td><td>08:00–10:00</td><td>Veri Yapıları</td><td>B-102 Lab</td><td>Öğr. Gör. E. ARSLAN</td></tr>
+                            <tr><td>Cuma</td><td>14:00–16:00</td><td>Ağ Sistemleri</td><td>A-105</td><td>Dr. Öğr. Üyesi E. AKMAN</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Oturum kontrolü
+const user = JSON.parse(sessionStorage.getItem('obs_user')||'null');
+if(!user||user.tip!=='ogrenci'){ window.location.href='index.html'; }
+
+// Öğrenci verisi
+const erkekIsim=["Ahmet","Mehmet","Ali","Mustafa","Hasan","Hüseyin","İbrahim","Yusuf","Emre","Burak","Can","Oğuz","Kaan","Efe","Mert","Deniz","Arda","Berk","Çınar","Ege"];
+const kizIsim=["Ayşe","Fatma","Zeynep","Elif","Merve","Büşra","Selin","Cansu","Melis","İrem","Eda","Defne","Leyla","Sude","Aslı","Gamze","Pınar","Derya","Aysun","Gül"];
+const soyadlar=["Yılmaz","Demir","Çelik","Kaya","Aydın","Öztürk","Şahin","Koç","Yıldız","Polat","Akman","Arslan","Taş","Bozkurt","Erdoğan","Kurt","Özkan","Duran","Şimşek","Kara"];
+const bolumler=["Bilgisayar Programcılığı","Web Tasarımı","Yapay Zeka","Mobil Uygulama","Ağ Sistemleri","Siber Güvenlik","Oyun Geliştirme","Veri Bilimi"];
+function rnd(d){return d[Math.floor(Math.random()*d.length)];}
+const ogrenciler=[];
+for(let i=1001;i<=1080;i++){
+    let c=Math.random()>.5?"erkek":"kız";
+    let isim=c==="erkek"?rnd(erkekIsim):rnd(kizIsim);
+    ogrenciler.push({no:i,tamAd:isim+" "+rnd(soyadlar),bolum:rnd(bolumler),fakulte:"Teknoloji Fakültesi",sinif:(Math.floor(Math.random()*4)+1)+". Sınıf",gno:(Math.random()*2+1.5).toFixed(2)});
+}
+ogrenciler[0]={no:1001,tamAd:"Ahmet Yılmaz",bolum:"Bilgisayar Programcılığı",fakulte:"Teknoloji Fakültesi",sinif:"2. Sınıf",gno:"3.24"};
+ogrenciler[1]={no:1002,tamAd:"Ayşe Demir",bolum:"Bilgisayar Programcılığı",fakulte:"Teknoloji Fakültesi",sinif:"2. Sınıf",gno:"3.68"};
+
+const ogr=ogrenciler.find(o=>o.no===user.no)||ogrenciler[0];
+document.getElementById('hdrAd').innerText=ogr.tamAd;
+document.getElementById('hdrNo').innerText="No: "+ogr.no;
+document.getElementById('hdrBolum').innerText=ogr.bolum;
+document.getElementById('pAd').innerText=ogr.tamAd;
+document.getElementById('pNo').innerText=ogr.no;
+document.getElementById('pFak').innerText=ogr.fakulte;
+document.getElementById('pBol').innerText=ogr.bolum;
+document.getElementById('pSin').innerText=ogr.sinif;
+document.getElementById('pGno').innerText=ogr.gno;
+document.getElementById('donemGno').innerText=ogr.gno;
+
+function tab(id, btn){
+    document.querySelectorAll('.tcon').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('active'));
+    document.getElementById('t-'+id).classList.add('active');
+    btn.classList.add('active');
+}
+function cikis(){
+    sessionStorage.removeItem('obs_user');
+    window.location.href='index.html';
+}
+</script>
+</body>
+</html>

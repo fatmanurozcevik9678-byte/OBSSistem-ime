@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haftalık Ders Programı | Nova Teknik Üniversitesi</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --navy: #0a1f44;
+            --gold: #ffc107;
+            --gold-dim: rgba(255, 193, 7, 0.15);
+            --cream: #eef2f7;
+            --cream-dark: #dce2eb;
+            --text: #0d1b2a;
+            --muted: #7a93a8;
+            --white: #fff;
+            --shadow: 0 20px 60px rgba(10, 31, 68, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse 70% 60% at 0% 0%, rgba(10, 31, 68, 0.06), transparent 60%),
+                        radial-gradient(ellipse 50% 50% at 100% 100%, rgba(255, 193, 7, 0.05), transparent 60%);
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            animation: up 0.5s ease both;
+        }
+
+        @keyframes up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border-bottom: 2px solid var(--cream);
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .title-block h2 {
+            font-size: 1.6rem;
+            color: var(--navy);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .title-block h2 i { color: var(--gold); }
+        .title-block p { font-size: .88rem; color: var(--muted); margin-top: .3rem; }
+
+        .back-btn {
+            padding: .6rem 1.2rem;
+            background: var(--navy);
+            color: var(--white);
+            font-size: .85rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: .2s;
+        }
+        .back-btn:hover { background: #132e5c; transform: translateX(-2px); }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            background: var(--cream);
+            padding: 1rem;
+            border-radius: 16px;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .filter-group label {
+            font-weight: 600;
+            color: var(--navy);
+        }
+        select {
+            padding: 0.5rem 1rem;
+            border: 1.5px solid var(--cream-dark);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            background: white;
+            cursor: pointer;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid var(--cream-dark);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .85rem;
+            min-width: 800px;
+        }
+        th {
+            background: var(--navy);
+            color: var(--white);
+            font-weight: 600;
+            padding: 1rem;
+            text-align: center;
+        }
+        td {
+            padding: 1rem 0.8rem;
+            border-bottom: 1px solid var(--cream);
+            vertical-align: top;
+        }
+        tr:hover td { background: rgba(238, 242, 247, 0.4); }
+        .break-row { text-align: center; background: var(--cream); padding: 0.5rem; font-weight: 600; color: var(--muted); }
+        .time-slot { font-weight: 700; color: var(--navy); display: flex; align-items: center; gap: 6px; }
+        .lesson-box {
+            background: var(--cream);
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--navy);
+        }
+        .lesson-name { font-weight: 600; font-size: .85rem; }
+        .lesson-meta { font-size: .7rem; color: var(--muted); margin-top: 4px; display: flex; gap: 8px; flex-wrap: wrap; }
+        .lesson-meta span i { margin-right: 2px; }
+        .empty-slot { color: var(--muted); font-style: italic; padding-top: 0.5rem; }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .header { flex-direction: column; align-items: flex-start; }
+            .filters { flex-direction: column; }
+            .filter-group { justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="title-block">
+            <h2><i class="fas fa-calendar-week"></i> Haftalık Ders Programı</h2>
+            <p>2025 – 2026 Akademik Yılı — Tüm Bölümler</p>
+        </div>
+        <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Geri Dön</a>
+    </div>
+
+    <div class="filters">
+        <div class="filter-group">
+            <label><i class="fas fa-building"></i> Bölüm:</label>
+            <select id="bolumSelect" title="Bölüm Seçiniz">
+                <option value="Bilgisayar Programcılığı">Bilgisayar Programcılığı</option>
+                <option value="Web Tasarımı">Web Tasarımı</option>
+                <option value="Yapay Zeka">Yapay Zeka</option>
+                <option value="Mobil Uygulama">Mobil Uygulama</option>
+                <option value="Ağ Sistemleri">Ağ Sistemleri</option>
+                <option value="Siber Güvenlik">Siber Güvenlik</option>
+                <option value="Oyun Geliştirme">Oyun Geliştirme</option>
+                <option value="Veri Bilimi">Veri Bilimi</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label><i class="fas fa-graduation-cap"></i> Sınıf:</label>
+            <select id="sinifSelect" title="Sınıf Seçiniz">
+                <option value="1">1. Sınıf</option>
+                <option value="2">2. Sınıf</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table id="programTable">
+            <thead>
+                <tr><th>Saat</th><th>Pazartesi</th><th>Salı</th><th>Çarşamba</th><th>Perşembe</th><th>Cuma</th></tr>
+            </thead>
+            <tbody id="programBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const gunler = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma"];
+    const saatler = ["09:00-10:30", "10:45-12:15", "12:15-13:30", "13:30-15:00", "15:15-16:45"];
+
+    // TÜM BÖLÜMLER İÇİN DERS PROGRAMLARI (1. ve 2. Sınıf)
+    const dersProgramlari = {
+        "Bilgisayar Programcılığı_1": {
+            "09:00-10:30": { "Pazartesi": "Programlama Temelleri (Prof. Dr. Mehmet DEMİR - Lab A-101)", "Salı": "Matematik I (Prof. Dr. Ayşe KAYA - Derslik 201)", "Çarşamba": "Boş", "Perşembe": "Web Tasarımı (Öğr. Gör. Ali YILDIZ - Lab B-102)", "Cuma": "İngilizce I (Okutman Esra ŞAHİN - Derslik 101)" },
+            "10:45-12:15": { "Pazartesi": "Programlama Temelleri (Prof. Dr. Mehmet DEMİR - Lab A-101)", "Salı": "Fizik I (Doç. Dr. Mustafa ÇELİK - Derslik 202)", "Çarşamba": "Veritabanı Yönetimi (Dr. Ali YILDIZ - Derslik 101)", "Perşembe": "Web Tasarımı (Öğr. Gör. Ali YILDIZ - Lab B-102)", "Cuma": "Türk Dili I (Okutman Fatma DEMİR - Derslik 103)" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "Boş", "Salı": "Atatürk İlkeleri I (Doç. Dr. Ayşe DEMİR - Derslik 105)", "Çarşamba": "Veritabanı Yönetimi (Dr. Ali YILDIZ - Derslik 101)", "Perşembe": "Boş", "Cuma": "Laboratuvar (Öğr. Gör. Burak KOÇ - Lab A-101)" },
+            "15:15-16:45": { "Pazartesi": "Boş", "Salı": "Boş", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Kariyer Planlama (Dr. Ayşe DEMİR - Derslik 101)" }
+        },
+        "Bilgisayar Programcılığı_2": {
+            "09:00-10:30": { "Pazartesi": "Nesne Tabanlı Prog. (Doç. Dr. Mehmet DEMİR - Lab A-101)", "Salı": "Veri Yapıları (Prof. Dr. Mehmet DEMİR - Lab A-102)", "Çarşamba": "İşletim Sistemleri (Öğr. Gör. Burak KOÇ - Lab B-201)", "Perşembe": "İngilizce II (Okutman Esra ŞAHİN - Derslik 101)", "Cuma": "Boş" },
+            "10:45-12:15": { "Pazartesi": "Nesne Tabanlı Prog. (Doç. Dr. Mehmet DEMİR - Lab A-101)", "Salı": "Veri Yapıları (Prof. Dr. Mehmet DEMİR - Lab A-102)", "Çarşamba": "Ağ Temelleri (Dr. Elif AKMAN - Lab B-201)", "Perşembe": "Web Tasarımı II (Öğr. Gör. Ali YILDIZ - Lab B-102)", "Cuma": "Boš" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "Siber Güvenliğe Giriş (Dr. Elif AKMAN - Derslik 102)", "Salı": "Matematik II (Prof. Dr. Ayşe KAYA - Derslik 201)", "Çarşamba": "Veritabanı Yönetimi II (Dr. Ali YILDIZ - Derslik 101)", "Perşembe": "Boş", "Cuma": "Boş" },
+            "15:15-16:45": { "Pazartesi": "Boş", "Salı": "Boş", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Boş" }
+        },
+        "Web Tasarımı_1": {
+            "09:00-10:30": { "Pazartesi": "HTML/CSS (Öğr. Gör. Ali YILDIZ - Lab B-102)", "Salı": "Grafik Tasarım (Öğr. Gör. Selin POLAT - Lab C-301)", "Çarşamba": "Boş", "Perşembe": "Temel Bilgi Teknolojileri (Doç. Dr. Zeynep KAYA - Lab A-101)", "Cuma": "İngilizce I (Okutman Esra ŞAHİN - Derslik 101)" },
+            "10:45-12:15": { "Pazartesi": "JavaScript (Öğr. Gör. Ali YILDIZ - Lab B-102)", "Salı": "Matematik I (Prof. Dr. Ayşe KAYA - Derslik 201)", "Çarşamba": "Boş", "Perşembe": "Türk Dili I (Okutman Fatma DEMİR - Derslik 103)", "Cuma": "Atatürk İlkeleri I (Doç. Dr. Ayşe DEMİR - Derslik 105)" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "Bootstrap (Öğr. Gör. Ali YILDIZ - Lab B-102)", "Salı": "Boş", "Çarşamba": "Boş", "Perşembe": "Laboratuvar (Öğr. Gör. Burak KOÇ - Lab A-101)", "Cuma": "Boş" },
+            "15:15-16:45": { "Pazartesi": "Boş", "Salı": "Boš", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Boş" }
+        },
+        "Web Tasarımı_2": {
+            "09:00-10:30": { "Pazartesi": "React.js (Dr. Ali YILDIZ - Lab B-102)", "Salı": "PHP (Öğr. Gör. Ali YILDIZ - Lab B-102)", "Çarşamba": "UX/UI Tasarım (Doç. Dr. Selin POLAT - Lab C-301)", "Perşembe": "İngilizce II (Okutman Esra ŞAHİN - Derslik 101)", "Cuma": "Boş" },
+            "10:45-12:15": { "Pazartesi": "Node.js (Dr. Ali YILDIZ - Lab B-102)", "Salı": "MongoDB (Dr. Ali YILDIZ - Derslik 101)", "Çarşamba": "SEO (Öğr. Gör. Ali YILDIZ - Derslik 102)", "Perşembe": "Boş", "Cuma": "Boş" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "WordPress (Doç. Dr. Selin POLAT - Lab C-301)", "Salı": "Veritabanı Yönetimi (Dr. Ali YILDIZ - Derslik 101)", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Boş" },
+            "15:15-16:45": { "Pazartesi": "Boš", "Salı": "Boš", "Çarşamba": "Portfolyo Tasarım (Öğr. Gör. Selin POLAT - Lab C-301)", "Perşembe": "Boš", "Cuma": "Boš" }
+        },
+        "Yapay Zeka_1": {
+            "09:00-10:30": { "Pazartesi": "Python Programlama (Doç. Dr. Zeynep KAYA - Lab A-102)", "Salı": "Yapay Zekaya Giriş (Doç. Dr. Zeynep KAYA - Lab A-102)", "Çarşamba": "Matematik I (Prof. Dr. Ayşe KAYA - Derslik 201)", "Perşembe": "İngilizce I (Okutman Esra ŞAHİN - Derslik 101)", "Cuma": "Türk Dili I (Okutman Fatma DEMİR - Derslik 103)" },
+            "10:45-12:15": { "Pazartesi": "Python Programlama (Doç. Dr. Zeynep KAYA - Lab A-102)", "Salı": "Algoritma (Prof. Dr. Mehmet DEMİR - Lab A-101)", "Çarşamba": "Atatürk İlkeleri I (Doç. Dr. Ayşe DEMİR - Derslik 105)", "Perşembe": "Boş", "Cuma": "Laboratuvar (Öğr. Gör. Burak KOÇ - Lab A-101)" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "Veri Yapıları (Prof. Dr. Mehmet DEMİR - Lab A-101)", "Salı": "Boş", "Çarşamba": "Boş", "Perşembe": "Boš", "Cuma": "Boş" },
+            "15:15-16:45": { "Pazartesi": "Boş", "Salı": "Boš", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Boş" }
+        },
+        "Yapay Zeka_2": {
+            "09:00-10:30": { "Pazartesi": "Makine Öğrenmesi (Prof. Dr. Zeynep KAYA - Lab A-102)", "Salı": "Derin Öğrenme (Doç. Dr. Zeynep KAYA - Lab A-102)", "Çarşamba": "İstatistik (Doç. Dr. Emre ARSLAN - Derslik 201)", "Perşembe": "İngilizce II (Okutman Esra ŞAHİN - Derslik 101)", "Cuma": "Boş" },
+            "10:45-12:15": { "Pazartesi": "NumPy/Pandas (Dr. Emre ARSLAN - Lab A-102)", "Salı": "Veri Bilimi (Dr. Emre ARSLAN - Derslik 101)", "Çarşamba": "Doğal Dil İşleme (Doç. Dr. Zeynep KAYA - Lab A-102)", "Perşembe": "Boş", "Cuma": "Boş" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "Görüntü İşleme (Prof. Dr. Zeynep KAYA - Lab A-102)", "Salı": "Veri Madenciliği (Dr. Emre ARSLAN - Derslik 101)", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Boş" },
+            "15:15-16:45": { "Pazartesi": "Boş", "Salı": "Boš", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Boş" }
+        },
+        "Mobil Uygulama_1": {
+            "09:00-10:30": { "Pazartesi": "Android Geliştirme (Prof. Dr. Mustafa ÇELİK - Lab B-301)", "Salı": "Java Temelleri (Doç. Dr. Mustafa ÇELİK - Lab B-301)", "Çarşamba": "İngilizce I (Okutman Esra ŞAHİN - Derslik 101)", "Perşembe": "Matematik I (Prof. Dr. Ayşe KAYA - Derslik 201)", "Cuma": "Türk Dili I (Okutman Fatma DEMİR - Derslik 103)" },
+            "10:45-12:15": { "Pazartesi": "UI/UX Tasarım (Öğr. Gör. Selin POLAT - Lab C-301)", "Salı": "Android Geliştirme (Prof. Dr. Mustafa ÇELİK - Lab B-301)", "Çarşamba": "Atatürk İlkeleri I (Doç. Dr. Ayşe DEMİR - Derslik 105)", "Perşembe": "Boş", "Cuma": "Laboratuvar (Öğr. Gör. Burak KOÇ - Lab A-101)" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "Boş", "Salı": "Boş", "Çarşamba": "Boş", "Perşembe": "Boš", "Cuma": "Boş" },
+            "15:15-16:45": { "Pazartesi": "Boş", "Salı": "Boš", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Boş" }
+        },
+        "Mobil Uygulama_2": {
+            "09:00-10:30": { "Pazartesi": "iOS Swift (Prof. Dr. Mustafa ÇELİK - Lab B-301)", "Salı": "Flutter (Dr. Mustafa ÇELİK - Lab B-301)", "Çarşamba": "React Native (Öğr. Gör. Mustafa ÇELİK - Lab B-301)", "Perşembe": "İngilizce II (Okutman Esra ŞAHİN - Derslik 101)", "Cuma": "Boş" },
+            "10:45-12:15": { "Pazartesi": "Kotlin (Doç. Dr. Mustafa ÇELİK - Lab B-301)", "Salı": "Firebase (Doç. Dr. Mustafa ÇELİK - Lab B-301)", "Çarşamba": "Mobil Oyun Geliştirme (Doç. Dr. Selin POLAT - Lab C-301)", "Perşembe": "Boş", "Cuma": "Boş" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "Cross Platform (Öğr. Gör. Mustafa ÇELİK - Lab B-301)", "Salı": "API Entegrasyonu (Prof. Dr. Mustafa ÇELİK - Lab B-301)", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Boş" },
+            "15:15-16:45": { "Pazartesi": "Boş", "Salı": "Boš", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Boş" }
+        },
+        "Ağ Sistemleri_1": {
+            "09:00-10:30": { "Pazartesi": "Bilgisayar Ağları (Dr. Elif AKMAN - Lab B-201)", "Salı": "Temel Elektronik (Doç. Dr. Mustafa ÇELİK - Derslik 202)", "Çarşamba": "İngilizce I (Okutman Esra ŞAHİN - Derslik 101)", "Perşembe": "Matematik I (Prof. Dr. Ayşe KAYA - Derslik 201)", "Cuma": "Türk Dili I (Okutman Fatma DEMİR - Derslik 103)" },
+            "10:45-12:15": { "Pazartesi": "Ağ Güvenliği (Prof. Dr. Elif AKMAN - Lab B-201)", "Salı": "Cisco (Dr. Elif AKMAN - Lab B-201)", "Çarşamba": "Atatürk İlkeleri I (Doç. Dr. Ayşe DEMİR - Derslik 105)", "Perşembe": "Boş", "Cuma": "Laboratuvar (Öğr. Gör. Burak KOÇ - Lab A-101)" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "TCP/IP (Dr. Elif AKMAN - Derslik 102)", "Salı": "Boş", "Çarşamba": "Boş", "Perşembe": "Boš", "Cuma": "Boş" },
+            "15:15-16:45": { "Pazartesi": "Boš", "Salı": "Boš", "Çarşamba": "Boš", "Perşembe": "Boš", "Cuma": "Boš" }
+        },
+        "Ağ Sistemleri_2": {
+            "09:00-10:30": { "Pazartesi": "Kablosuz Ağlar (Dr. Elif AKMAN - Lab B-201)", "Salı": "Ağ Yönetimi (Doç. Dr. Elif AKMAN - Lab B-201)", "Çarşamba": "Cloud Computing (Öğr. Gör. Burak KOÇ - Derslik 101)", "Perşembe": "İngilizce II (Okutman Esra ŞAHİN - Derslik 101)", "Cuma": "Boş" },
+            "10:45-12:15": { "Pazartesi": "Siber Olay Müdahalesi (Öğr. Gör. Burak KOÇ - Derslik 102)", "Salı": "Sunucu Yönetimi (Doç. Dr. Elif AKMAN - Lab B-201)", "Çarşamba": "Ağ Simülasyonları (Dr. Elif AKMAN - Lab B-201)", "Perşembe": "Boş", "Cuma": "Boş" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "Veri Merkezi (Prof. Dr. Elif AKMAN - Derslik 102)", "Salı": "Ağ Tasarımı (Doç. Dr. Elif AKMAN - Lab B-201)", "Çarşamba": "Boš", "Perşembe": "Boš", "Cuma": "Boš" },
+            "15:15-16:45": { "Pazartesi": "Boš", "Salı": "Boš", "Çarşamba": "Boš", "Perşembe": "Boš", "Cuma": "Boš" }
+        },
+        "Siber Güvenlik_1": {
+            "09:00-10:30": { "Pazartesi": "Siber Güvenliğe Giriş (Öğr. Gör. Burak KOÇ - Derslik 102)", "Salı": "Ağ Güvenliği (Prof. Dr. Elif AKMAN - Lab B-201)", "Çarşamba": "İngilizce I (Okutman Esra ŞAHİN - Derslik 101)", "Perşembe": "Matematik I (Prof. Dr. Ayşe KAYA - Derslik 201)", "Cuma": "Türk Dili I (Okutman Fatma DEMİR - Derslik 103)" },
+            "10:45-12:15": { "Pazartesi": "Kriptografi (Öğr. Gör. Burak KOÇ - Derslik 102)", "Salı": "Sızma Testleri (Doç. Dr. Burak KOÇ - Lab B-201)", "Çarşamba": "Atatürk İlkeleri I (Doç. Dr. Ayşe DEMİR - Derslik 105)", "Perşembe": "Boş", "Cuma": "Laboratuvar (Öğr. Gör. Burak KOÇ - Lab A-101)" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "Adli Bilişim (Doç. Dr. Burak KOÇ - Lab B-201)", "Salı": "Boş", "Çarşamba": "Boş", "Perşembe": "Boš", "Cuma": "Boš" },
+            "15:15-16:45": { "Pazartesi": "Boš", "Salı": "Boš", "Çarşamba": "Boš", "Perşembe": "Boš", "Cuma": "Boš" }
+        },
+        "Siber Güvenlik_2": {
+            "09:00-10:30": { "Pazartesi": "Kötücül Yazılımlar (Prof. Dr. Elif AKMAN - Lab B-201)", "Salı": "Web Güvenliği (Öğr. Gör. Burak KOÇ - Derslik 102)", "Çarşamba": "Siber Tehdit İstihbaratı (Prof. Dr. Elif AKMAN - Derslik 102)", "Perşembe": "İngilizce II (Okutman Esra ŞAHİN - Derslik 101)", "Cuma": "Boş" },
+            "10:45-12:15": { "Pazartesi": "Güvenlik Duvarları (Doç. Dr. Burak KOÇ - Derslik 102)", "Salı": "SIEM (Prof. Dr. Elif AKMAN - Lab B-201)", "Çarşamba": "Etik Hacking (Öğr. Gör. Burak KOÇ - Lab B-201)", "Perşembe": "Boş", "Cuma": "Boş" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "Siber Güvenlik Lab (Prof. Dr. Elif AKMAN - Lab B-201)", "Salı": "Boş", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Boş" },
+            "15:15-16:45": { "Pazartesi": "Boş", "Salı": "Boş", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Boş" }
+        },
+        "Oyun Geliştirme_1": {
+            "09:00-10:30": { "Pazartesi": "Oyun Geliştirmeye Giriş (Doç. Dr. Selin POLAT - Lab C-401)", "Salı": "C# Programlama (Prof. Dr. Mehmet DEMİR - Lab A-101)", "Çarşamba": "İngilizce I (Okutman Esra ŞAHİN - Derslik 101)", "Perşembe": "Matematik I (Prof. Dr. Ayşe KAYA - Derslik 201)", "Cuma": "Türk Dili I (Okutman Fatma DEMİR - Derslik 103)" },
+            "10:45-12:15": { "Pazartesi": "Unity (Doç. Dr. Selin POLAT - Lab C-401)", "Salı": "2D Oyun Tasarımı (Öğr. Gör. Selin POLAT - Lab C-401)", "Çarşamba": "Atatürk İlkeleri I (Doç. Dr. Ayşe DEMİR - Derslik 105)", "Perşembe": "Boş", "Cuma": "Laboratuvar (Öğr. Gör. Burak KOÇ - Lab A-101)" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "Oyun Fiziği (Doç. Dr. Selin POLAT - Lab C-401)", "Salı": "Boş", "Çarşamba": "Boş", "Perşembe": "Boš", "Cuma": "Boš" },
+            "15:15-16:45": { "Pazartesi": "Boš", "Salı": "Boš", "Çarşamba": "Boš", "Perşembe": "Boš", "Cuma": "Boš" }
+        },
+        "Oyun Geliştirme_2": {
+            "09:00-10:30": { "Pazartesi": "Unreal Engine (Prof. Dr. Selin POLAT - Lab C-401)", "Salı": "3D Modelleme (Öğr. Gör. Selin POLAT - Lab C-401)", "Çarşamba": "Oyun Yapay Zekası (Doç. Dr. Selin POLAT - Lab C-401)", "Perşembe": "İngilizce II (Okutman Esra ŞAHİN - Derslik 101)", "Cuma": "Boš" },
+            "10:45-12:15": { "Pazartesi": "Animasyon (Öğr. Gör. Selin POLAT - Lab C-401)", "Salı": "Mobil Oyun (Doç. Dr. Selin POLAT - Lab C-401)", "Çarşamba": "Oyun Test (Öğr. Gör. Selin POLAT - Lab C-401)", "Perşembe": "Boş", "Cuma": "Boš" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "Oyun Tasarımı (Doç. Dr. Selin POLAT - Lab C-401)", "Salı": "Oyun Projesi (Doç. Dr. Selin POLAT - Lab C-401)", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Boš" },
+            "15:15-16:45": { "Pazartesi": "Boš", "Salı": "Boš", "Çarşamba": "Boš", "Perşembe": "Boš", "Cuma": "Boš" }
+        },
+        "Veri Bilimi_1": {
+            "09:00-10:30": { "Pazartesi": "Veri Bilimine Giriş (Dr. Emre ARSLAN - Derslik 101)", "Salı": "Python Programlama (Doç. Dr. Zeynep KAYA - Lab A-102)", "Çarşamba": "İngilizce I (Okutman Esra ŞAHİN - Derslik 101)", "Perşembe": "Matematik I (Prof. Dr. Ayşe KAYA - Derslik 201)", "Cuma": "Türk Dili I (Okutman Fatma DEMİR - Derslik 103)" },
+            "10:45-12:15": { "Pazartesi": "SQL (Dr. Ali YILDIZ - Derslik 101)", "Salı": "Veri Analizi (Prof. Dr. Emre ARSLAN - Lab A-102)", "Çarşamba": "Atatürk İlkeleri I (Doç. Dr. Ayşe DEMİR - Derslik 105)", "Perşembe": "Boş", "Cuma": "Laboratuvar (Öğr. Gör. Burak KOÇ - Lab A-101)" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "Pandas (Dr. Emre ARSLAN - Lab A-102)", "Salı": "NumPy (Doç. Dr. Zeynep KAYA - Lab A-102)", "Çarşamba": "Boş", "Perşembe": "Boš", "Cuma": "Boş" },
+            "15:15-16:45": { "Pazartesi": "Boş", "Salı": "Boš", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Boş" }
+        },
+        "Veri Bilimi_2": {
+            "09:00-10:30": { "Pazartesi": "Makine Öğrenmesi (Prof. Dr. Zeynep KAYA - Lab A-102)", "Salı": "Veri Görselleştirme (Prof. Dr. Emre ARSLAN - Lab A-102)", "Çarşamba": "Büyük Veri (Dr. Emre ARSLAN - Derslik 101)", "Perşembe": "İngilizce II (Okutman Esra ŞAHİN - Derslik 101)", "Cuma": "Boş" },
+            "10:45-12:15": { "Pazartesi": "Veri Madenciliği (Dr. Emre ARSLAN - Lab A-102)", "Salı": "R Programlama (Doç. Dr. Emre ARSLAN - Derslik 102)", "Çarşamba": "Tableau (Prof. Dr. Emre ARSLAN - Lab A-102)", "Perşembe": "Boş", "Cuma": "Boş" },
+            "12:15-13:30": { "Pazartesi": "Öğle Arası", "Salı": "Öğle Arası", "Çarşamba": "Öğle Arası", "Perşembe": "Öğle Arası", "Cuma": "Öğle Arası" },
+            "13:30-15:00": { "Pazartesi": "Power BI (Öğr. Gör. Emre ARSLAN - Lab A-102)", "Salı": "Veri Temizleme (Doç. Dr. Emre ARSLAN - Derslik 101)", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Boş" },
+            "15:15-16:45": { "Pazartesi": "Boş", "Salı": "Boş", "Çarşamba": "Boş", "Perşembe": "Boş", "Cuma": "Boş" }
+        }
+    };
+
+    function getProgram(bolum, sinif) {
+        const key = `${bolum}_${sinif}`;
+        return dersProgramlari[key] || {};
+    }
+
+    function renderProgram() {
+        const bolum = document.getElementById('bolumSelect').value;
+        const sinif = document.getElementById('sinifSelect').value;
+        const program = getProgram(bolum, sinif);
+        
+        let html = '';
+        for (let i = 0; i < saatler.length; i++) {
+            const saat = saatler[i];
+            const dersler = program[saat] || {};
+            
+            if (saat === "12:15-13:30") {
+                html += `<tr class="break-row"><td colspan="6"><i class="fas fa-utensils"></i> ÖĞLE ARASI (12:15 - 13:30)</td></tr>`;
+                continue;
+            }
+            
+            html += `<tr>`;
+            html += `<td class="time-slot"><i class="far fa-clock"></i> ${saat}</td>`;
+            
+            for (let j = 0; j < gunler.length; j++) {
+                const gun = gunler[j];
+                const ders = dersler[gun] || "Boş";
+                
+                if (ders === "Boş") {
+                    html += `<td><div class="empty-slot">─ Boş Seans ─</div></td>`;
+                } else {
+                    let dersAd = ders;
+                    let ogretmen = "";
+                    let salon = "";
+                    if (ders.includes("(")) {
+                        const parca1 = ders.split("(");
+                        dersAd = parca1[0].trim();
+                        const kalan = parca1[1].split(")");
+                        ogretmen = kalan[0];
+                        if (kalan[1]) salon = kalan[1].trim();
+                    }
+                    html += `<td>
+                        <div class="lesson-box">
+                            <div class="lesson-name">${dersAd}</div>
+                            <div class="lesson-meta">
+                                ${ogretmen ? `<span><i class="fas fa-user-tie"></i> ${ogretmen}</span>` : ''}
+                                ${salon ? `<span><i class="fas fa-door-open"></i> ${salon}</span>` : ''}
+                            </div>
+                        </div>
+                    </td>`;
+                }
+            }
+            html += `</tr>`;
+        }
+        
+        document.getElementById('programBody').innerHTML = html;
+    }
+
+    document.getElementById('bolumSelect').addEventListener('change', renderProgram);
+    document.getElementById('sinifSelect').addEventListener('change', renderProgram);
+    
+    renderProgram();
+</script>
+</body>
+</html>

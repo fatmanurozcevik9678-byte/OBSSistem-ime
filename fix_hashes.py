@@ -1,0 +1,18 @@
+import codecs
+
+with codecs.open('frontend/index.html', 'r', 'utf-16le') as f:
+    content = f.read()
+
+# Replace student hash
+content = content.replace("4F37C061F1854F9682F543FECB5EE9D652C803235970202DE97C6E40C8361766", "03AC674216F3E15C761EE1A5E255F067953623C8B388B4459E13F978D7C846F4")
+
+# Replace teacher hash
+content = content.replace("3B5D5C3714BD8D6F6C7E5C5F5C5F5C5F5C5F5C5F5C5F5C5F5C5F5C5F5C5F5C", "F8638B979B2F4F793DDB6DBD197E0EE25A7A6EA32B0AE22F5E3C5D119D839E75")
+
+# Replace admin hash
+content = content.replace("5E884898DA28047151D0E56F8DC6292773603D0D6AABBDD62A11EF721D1542D8", "DB2E7F1BD5AB9968AE76199B7CC74795CA7404D5A08D78567715CE532F9D2669")
+
+with codecs.open('frontend/index.html', 'w', 'utf-16le') as f:
+    f.write(content)
+
+print("Done")

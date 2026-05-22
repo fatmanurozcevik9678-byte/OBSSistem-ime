@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBSApp - Şifremi Unuttum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 35px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            color: #0a1f44;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .aciklama {
+            color: #555;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+        button {
+            width: 100%;
+            background: #0a1f44;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 5px;
+        }
+
+        button:hover {
+            background: #1e3a6b;
+        }
+
+        .geri-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #0a1f44;
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .geri-link:hover {
+            text-decoration: underline;
+        }
+
+        .mesaj {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .mesaj.basarili {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .mesaj.hata {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .adim {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fc;
+            border-radius: 16px;
+        }
+
+        .adim-baslik {
+            font-weight: bold;
+            color: #0a1f44;
+            margin-bottom: 12px;
+        }
+        
+        /* Satır içi (inline) CSS uyarısını çözen sınıf */
+        .gizli-adim {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Şifremi Unuttum</h2>
+        <div class="aciklama">
+            Öğrenci veya personel numaranızı girip yeni şifre belirleyebilirsiniz.
+        </div>
+
+        <div id="adim1" class="adim">
+            <div class="adim-baslik">1. Numaranızı girin</div>
+            <input type="text" id="kullaniciNo" placeholder="Öğrenci No (1001-1080) veya Personel No (2001-2008)">
+            <button onclick="kontroleGit()">Devam Et</button>
+        </div>
+
+        <div id="adim2" class="adim gizli-adim">
+            <div class="adim-baslik">2. Yeni şifrenizi belirleyin</div>
+            <input type="password" id="yeniSifre" placeholder="Yeni Şifre">
+            <input type="password" id="yeniSifreTekrar" placeholder="Yeni Şifre (Tekrar)">
+            <button onclick="sifreKaydet()">Şifreyi Kaydet</button>
+        </div>
+
+        <div id="sonucMesaj" class="mesaj"></div>
+        <a href="index.html" class="geri-link">← Giriş Sayfasına Dön</a>
+    </div>
+
+    <script>
+        let dogrulananNo = null;
+        let kullaniciTipi = null;
+
+        if (!localStorage.getItem("sifreler")) {
+            const varsayilanSifreler = {};
+            for (let i = 1001; i <= 1080; i++) varsayilanSifreler[i] = "1234";
+            for (let i = 2001; i <= 2008; i++) varsayilanSifreler[i] = "1234";
+            localStorage.setItem("sifreler", JSON.stringify(varsayilanSifreler));
+        }
+
+        function kontroleGit() {
+            const no = document.getElementById('kullaniciNo').value.trim();
+            const mesajDiv = document.getElementById('sonucMesaj');
+
+            if (!no) {
+                mesajDiv.className = "mesaj hata";
+                mesajDiv.style.display = "block";
+                mesajDiv.innerText = "Lütfen numaranızı girin.";
+                return;
+            }
+
+            const numara = parseInt(no);
+            const isOgrenci = !isNaN(numara) && numara >= 1001 && numara <= 1080;
+            const isPersonel = !isNaN(numara) && numara >= 2001 && numara <= 2008;
+
+            if (!isOgrenci && !isPersonel) {
+                mesajDiv.className = "mesaj hata";
+                mesajDiv.style.display = "block";
+                mesajDiv.innerText = "Geçersiz numara. Öğrenci: 1001-1080, Personel: 2001-2008";
+                return;
+            }
+
+            dogrulananNo = numara;
+            kullaniciTipi = isOgrenci ? "ogrenci" : "personel";
+
+            document.getElementById('yeniSifre').value = "";
+            document.getElementById('yeniSifreTekrar').value = "";
+
+            document.getElementById('adim1').style.display = 'none';
+            // style.display değiştirerek yine görünür yapıyoruz
+            document.getElementById('adim2').style.display = 'block'; 
+            mesajDiv.style.display = "none";
+        }
+
+        function sifreKaydet() {
+            const yeniSifre = document.getElementById('yeniSifre').value.trim();
+            const yeniSifreTekrar = document.getElementById('yeniSifreTekrar').value.trim();
+            const mesajDiv = document.getElementById('sonucMesaj');
+
+            if (yeniSifre === "" || yeniSifreTekrar === "") {
+                mesajDiv.className = "mesaj hata";
+                mesajDiv.style.display = "block";
+                mesajDiv.innerText = "Lütfen yeni şifre alanlarını boş bırakmayın.";
+                return;
+            }
+
+            if (yeniSifre !== yeniSifreTekrar) {
+                mesajDiv.className = "mesaj hata";
+                mesajDiv.style.display = "block";
+                mesajDiv.innerText = "Şifreler uyuşmuyor.";
+                return;
+            }
+
+            if (yeniSifre.length < 4) {
+                mesajDiv.className = "mesaj hata";
+                mesajDiv.style.display = "block";
+                mesajDiv.innerText = "Şifre en az 4 karakter olmalıdır.";
+                return;
+            }
+
+            const sifreler = JSON.parse(localStorage.getItem("sifreler"));
+            sifreler[dogrulananNo] = yeniSifre;
+            localStorage.setItem("sifreler", JSON.stringify(sifreler));
+
+            mesajDiv.className = "mesaj basarili";
+            mesajDiv.style.display = "block";
+            mesajDiv.innerText = `${dogrulananNo} numaralı ${kullaniciTipi === "ogrenci" ? "öğrencinin" : "personelin"} şifresi başarıyla değiştirildi.`;
+
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 2500);
+        }
+    </script>
+</body>
+</html>

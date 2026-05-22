@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>OBSApp - Burs Başvurusu</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+        body{background:#eef2f7;padding:40px 20px}
+        .container{max-width:600px;margin:0 auto}
+        .card{background:white;border-radius:24px;padding:30px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+        h1{color:#0a1f44;border-left:5px solid #ffc107;padding-left:15px;margin-bottom:25px}
+        input{width:100%;padding:12px;margin-bottom:15px;border:1px solid #ccc;border-radius:12px}
+        button{width:100%;background:#0a1f44;color:white;border:none;padding:12px;border-radius:12px;cursor:pointer}
+        .btn-geri{display:inline-block;margin-top:20px;background:#ebf0f5;color:#0a1f44;padding:10px 20px;border-radius:30px;text-decoration:none;text-align:center}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🎓 Başarı Bursu Başvurusu</h1>
+            <p>Son başvuru: 15 Mart 2026</p>
+            <input type="text" id="adSoyad" placeholder="Ad Soyad">
+            <input type="text" id="ogrenciNo" placeholder="Öğrenci No">
+            <input type="text" id="gno" placeholder="GNO">
+            <button onclick="alert('Burs başvurunuz alınmıştır.')">Başvuruyu Gönder</button>
+            <a href="dashboard.html" class="btn-geri">← Geri</a>
+        </div>
+    </div>
+    <script>
+        const ogrenci = JSON.parse(sessionStorage.getItem("ogrenci"));
+        if(ogrenci){
+            document.getElementById("adSoyad").value = `${ogrenci.ad} ${ogrenci.soyad}`;
+            document.getElementById("ogrenciNo").value = ogrenci.ogrenciNo;
+            document.getElementById("gno").value = ogrenci.gpa;
+        }
+    </script>
+</body>
+</html>

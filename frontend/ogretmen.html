@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Teknik Üniversitesi | Öğretim Elemanı Paneli</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --navy: #0a1f44;
+            --gold: #ffc107;
+            --gold-dim: rgba(255,193,7,0.15);
+            --cream: #eef2f7;
+            --cream-dark: #dce2eb;
+            --text: #0d1b2a;
+            --muted: #7a93a8;
+            --white: #fff;
+            --red: #dc2626;
+            --red-dim: rgba(220,38,38,0.1);
+            --green: #16a34a;
+            --blue: #2563eb;
+            --blue-dim: rgba(37,99,235,0.1);
+            --shadow: 0 20px 60px rgba(10,31,68,0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+        }
+        .container { max-width: 1300px; margin: 0 auto; }
+        
+        .header {
+            background: var(--navy);
+            border-radius: 20px;
+            padding: 1.2rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .header h1 {
+            font-size: 1.3rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header h1 i { color: var(--gold); }
+        .user-info { color: white; font-size: 0.8rem; }
+        .logout-btn {
+            background: rgba(255,193,7,0.15);
+            border: 1px solid rgba(255,193,7,0.3);
+            color: var(--gold);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .logout-btn:hover { background: var(--gold); color: var(--navy); }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gold-dim);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 1.2rem;
+        }
+        .stat-info h3 { font-size: 1.8rem; font-weight: 700; color: var(--text); }
+        .stat-info p { font-size: 0.75rem; color: var(--muted); }
+        
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--cream-dark);
+            padding-bottom: 0.5rem;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--gold-dim);
+            color: var(--gold);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .ders-selector {
+            background: var(--cream);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .ders-selector label { font-weight: 600; color: var(--navy); }
+        .ders-selector select {
+            padding: 0.5rem 1rem;
+            border: 1.5px solid var(--cream-dark);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            background: white;
+            cursor: pointer;
+            min-width: 250px;
+        }
+        
+        .card {
+            background: var(--cream);
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--cream-dark);
+        }
+        .card-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-title i { color: var(--gold); }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--muted);
+            display: block;
+            margin-bottom: 4px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1.5px solid var(--cream-dark);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .btn-submit {
+            background: var(--navy);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-submit:hover { background: #132e5c; }
+        
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        th {
+            text-align: left;
+            padding: 0.8rem 0.5rem;
+            background: var(--cream-dark);
+            color: var(--text);
+            font-weight: 600;
+        }
+        td {
+            padding: 0.6rem 0.5rem;
+            border-bottom: 1px solid var(--cream-dark);
+        }
+        .action-btn {
+            background: var(--blue-dim);
+            color: var(--blue);
+            border: none;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            margin-right: 4px;
+        }
+        .action-btn.danger { background: var(--red-dim); color: var(--red); }
+        .status-warning { color: #d97706; font-weight: 600; }
+        .status-danger { color: var(--red); font-weight: 600; }
+        .status-success { color: var(--green); font-weight: 600; }
+        
+        @media (max-width: 700px) {
+            .stats { grid-template-columns: 1fr 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .header { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-chalkboard-user"></i> Öğretim Elemanı Paneli</h1>
+        <div>
+            <span class="user-info" id="userInfo"></span>
+            <button class="logout-btn" onclick="cikisYap()"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</button>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-info">
+                <h3 id="toplamOgrenci">0</h3>
+                <p>Danışman Öğrenci</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-chalkboard"></i></div>
+            <div class="stat-info">
+                <h3 id="toplamDers">0</h3>
+                <p>Verdiğim Ders</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="stat-info">
+                <h3 id="ortalamaGno">0</h3>
+                <p>Danışman GNO Ort.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="tabGoster('danisman')"><i class="fas fa-users"></i> Danışman Öğrenciler</button>
+        <button class="tab-btn" onclick="tabGoster('notlar')"><i class="fas fa-pencil-alt"></i> Not Girişi</button>
+        <button class="tab-btn" onclick="tabGoster('devamsizlik')"><i class="fas fa-calendar-times"></i> Devamsızlık</button>
+    </div>
+
+    <div id="tab-danisman" class="tab-content active">
+        <div class="card">
+            <div class="card-title"><i class="fas fa-users"></i> Danışmanlık Yaptığım Öğrenciler</div>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>No</th><th>Ad Soyad</th><th>Bölüm</th><th>Sınıf</th><th>GNO</th><th>Durum</th></tr></thead>
+                    <tbody id="danismanListesi"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-notlar" class="tab-content">
+        <div class="ders-selector">
+            <label><i class="fas fa-book"></i> Ders Seçiniz:</label>
+            <select id="dersSecimNot" onchange="notlariGetir()">
+                <option value="">-- Ders Seçiniz --</option>
+            </select>
+        </div>
+        <div class="card">
+            <div class="card-title"><i class="fas fa-pencil-alt"></i> Not Girişi</div>
+            <div class="form-row">
+                <div class="form-group"><label>Öğrenci No</label><input type="text" id="notOgrenciNo" placeholder="Öğrenci No"></div>
+                <div class="form-group"><label>Vize (0-100)</label><input type="number" id="notVize" min="0" max="100"></div>
+                <div class="form-group"><label>Final (0-100)</label><input type="number" id="notFinal" min="0" max="100"></div>
+                <button class="btn-submit" onclick="notKaydet()"><i class="fas fa-save"></i> Kaydet</button>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>No</th><th>Ad Soyad</th><th>Vize</th><th>Final</th><th>Ortalama</th><th>Harf Notu</th></tr></thead>
+                    <tbody id="notListesi"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-devamsizlik" class="tab-content">
+        <div class="ders-selector">
+            <label><i class="fas fa-book"></i> Ders Seçiniz:</label>
+            <select id="dersSecimDevam" onchange="devamsizliklariGetir()">
+                <option value="">-- Ders Seçiniz --</option>
+            </select>
+        </div>
+        <div class="card">
+            <div class="card-title"><i class="fas fa-calendar-times"></i> Devamsızlık Takibi</div>
+            <div class="table-wrapper">
+                <tr>
+                    <thead><tr><th>No</th><th>Ad Soyad</th><th>Devamsızlık</th><th>Oran</th><th>Durum</th><th>İşlem</th></tr></thead>
+                    <tbody id="devamListesi"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function cikisYap() {
+        sessionStorage.removeItem('obs_user');
+        window.location.href = 'index.html';
+    }
+
+    let currentUser = JSON.parse(sessionStorage.getItem('obs_user') || '{}');
+    if (!currentUser || currentUser.rol !== 'hoca') {
+        window.location.href = 'index.html';
+    }
+
+    let tumOgrenciler = JSON.parse(localStorage.getItem('MÜOS_Sunucu_Ogrenciler') || '[]');
+    let tumOgretmenler = JSON.parse(localStorage.getItem('MÜOS_Sunucu_Ogretmenler') || '[]');
+    
+    let hoca = tumOgretmenler.find(h => h.no == currentUser.no);
+    if (!hoca) {
+        alert("Öğretmen bilgileri bulunamadı!");
+        window.location.href = 'index.html';
+    }
+
+    document.getElementById('userInfo').innerHTML = `<i class="fas fa-user-check"></i> ${hoca.unvan} ${hoca.ad} ${hoca.soyad}`;
+
+    let danismanOgrenciler = tumOgrenciler.filter(o => o.bolum === hoca.bolum);
+    
+    const dersListesi = [
+        { id:1, kod:"BIL101", ad:"Programlama Temelleri", akts:6 },
+        { id:2, kod:"BIL102", ad:"Nesne Tabanlı Programlama", akts:5 },
+        { id:3, kod:"WEB101", ad:"Web Tasarımı", akts:5 }
+    ];
+    
+    let ogretmenDersleri = dersListesi.slice(0, 3);
+    
+    let notlar = JSON.parse(localStorage.getItem('MÜOS_Sunucu_Notlar') || '{}');
+    let devamsizliklar = JSON.parse(localStorage.getItem('MÜOS_Sunucu_Devamsizlik') || '{}');
+    
+    function kaydetNotlar() {
+        localStorage.setItem('MÜOS_Sunucu_Notlar', JSON.stringify(notlar));
+    }
+    
+    function kaydetDevamsizliklar() {
+        localStorage.setItem('MÜOS_Sunucu_Devamsizlik', JSON.stringify(devamsizliklar));
+    }
+    
+    function danismanlariGoster() {
+        let toplamGno = 0;
+        let html = '';
+        for (let ogr of danismanOgrenciler) {
+            toplamGno += parseFloat(ogr.gno);
+            let durum = ogr.aktif !== false ? '<span class="status-success">✓ Aktif</span>' : '<span class="status-danger">✗ Pasif</span>';
+            html += `<tr>
+                        <td>${ogr.no}</td>
+                        <td>${ogr.tamAd}</td>
+                        <td>${ogr.bolum}</td>
+                        <td>${ogr.sinif}</td>
+                        <td>${ogr.gno}</td>
+                        <td>${durum}</td>
+                    </tr>`;
+        }
+        document.getElementById('danismanListesi').innerHTML = html;
+        document.getElementById('toplamOgrenci').innerText = danismanOgrenciler.length;
+        document.getElementById('toplamDers').innerText = ogretmenDersleri.length;
+        document.getElementById('ortalamaGno').innerText = danismanOgrenciler.length ? (toplamGno / danismanOgrenciler.length).toFixed(2) : '0';
+    }
+    
+    function dersSecenekleriniDoldur() {
+        let htmlNot = '<option value="">-- Ders Seçiniz --</option>';
+        let htmlDevam = '<option value="">-- Ders Seçiniz --</option>';
+        for (let ders of ogretmenDersleri) {
+            htmlNot += `<option value="${ders.id}">${ders.kod} - ${ders.ad}</option>`;
+            htmlDevam += `<option value="${ders.id}">${ders.kod} - ${ders.ad}</option>`;
+        }
+        document.getElementById('dersSecimNot').innerHTML = htmlNot;
+        document.getElementById('dersSecimDevam').innerHTML = htmlDevam;
+    }
+    
+    function notlariGetir() {
+        let dersId = document.getElementById('dersSecimNot').value;
+        if (!dersId) return;
+        
+        let html = '';
+        for (let ogr of danismanOgrenciler) {
+            let n = notlar[`${dersId}_${ogr.no}`] || {};
+            let ort = '—';
+            let harf = '';
+            if (n.vize !== undefined && n.final !== undefined) {
+                ort = (n.vize * 0.4 + n.final * 0.6).toFixed(1);
+                harf = notHarf(parseFloat(ort));
+            }
+            html += `<tr>
+                        <td>${ogr.no}</td>
+                        <td>${ogr.tamAd}</td>
+                        <td>${n.vize !== undefined ? n.vize : '—'}</td>
+                        <td>${n.final !== undefined ? n.final : '—'}</td>
+                        <td>${ort}</td>
+                        <td><span class="status-success">${harf}</span></td>
+                    </tr>`;
+        }
+        document.getElementById('notListesi').innerHTML = html;
+    }
+    
+    function notHarf(ortalama) {
+        if (ortalama >= 90) return 'AA';
+        if (ortalama >= 85) return 'BA';
+        if (ortalama >= 80) return 'BB';
+        if (ortalama >= 75) return 'CB';
+        if (ortalama >= 65) return 'CC';
+        return 'FF';
+    }
+    
+    function notKaydet() {
+        let dersId = document.getElementById('dersSecimNot').value;
+        let ogrNo = parseInt(document.getElementById('notOgrenciNo').value);
+        let vize = parseInt(document.getElementById('notVize').value);
+        let final = parseInt(document.getElementById('notFinal').value);
+        
+        if (!dersId) { alert("Lütfen ders seçin!"); return; }
+        if (!ogrNo) { alert("Öğrenci no girin!"); return; }
+        if (isNaN(vize) || isNaN(final)) { alert("Vize ve final notunu girin!"); return; }
+        if (vize < 0 || vize > 100 || final < 0 || final > 100) { alert("Notlar 0-100 arasında olmalı!"); return; }
+        
+        let ogr = danismanOgrenciler.find(o => o.no === ogrNo);
+        if (!ogr) { alert("Bu öğrenci danışman listenizde yok!"); return; }
+        
+        notlar[`${dersId}_${ogrNo}`] = { vize: vize, final: final };
+        kaydetNotlar();
+        notlariGetir();
+        
+        document.getElementById('notOgrenciNo').value = '';
+        document.getElementById('notVize').value = '';
+        document.getElementById('notFinal').value = '';
+        
+        alert(`${ogr.tamAd} için notlar kaydedildi.`);
+    }
+    
+    function devamsizliklariGetir() {
+        let dersId = document.getElementById('dersSecimDevam').value;
+        if (!dersId) return;
+        
+        let html = '';
+        for (let ogr of danismanOgrenciler) {
+            let devam = devamsizliklar[`${dersId}_${ogr.no}`] || 0;
+            let oran = (devam / 42 * 100).toFixed(1);
+            let durum = oran >= 30 ? '<span class="status-danger">✗ Sınır Aşıldı</span>' : oran >= 20 ? '<span class="status-warning">⚠ Dikkat</span>' : '<span class="status-success">✓ Normal</span>';
+            html += `<tr>
+                        <td>${ogr.no}</td>
+                        <td>${ogr.tamAd}</td>
+                        <td>${devam}/42</td>
+                        <td>%${oran}</td>
+                        <td>${durum}</td>
+                        <td>
+                            <button class="action-btn" onclick="devamEkle(${dersId}, ${ogr.no})"><i class="fas fa-plus"></i> Ekle</button>
+                            <button class="action-btn danger" onclick="devamSil(${dersId}, ${ogr.no})"><i class="fas fa-trash"></i> Sil</button>
+                        </td>
+                    </tr>`;
+        }
+        document.getElementById('devamListesi').innerHTML = html;
+    }
+    
+    function devamEkle(dersId, ogrNo) {
+        let key = `${dersId}_${ogrNo}`;
+        devamsizliklar[key] = (devamsizliklar[key] || 0) + 1;
+        kaydetDevamsizliklar();
+        devamsizliklariGetir();
+    }
+    
+    function devamSil(dersId, ogrNo) {
+        let key = `${dersId}_${ogrNo}`;
+        let yeniDeger = (devamsizliklar[key] || 0) - 1;
+        devamsizliklar[key] = yeniDeger < 0 ? 0 : yeniDeger;
+        kaydetDevamsizliklar();
+        devamsizliklariGetir();
+    }
+    
+    function tabGoster(tab) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        
+        if (tab === 'danisman') {
+            document.getElementById('tab-danisman').classList.add('active');
+            document.querySelector('.tab-btn:first-child').classList.add('active');
+        } else if (tab === 'notlar') {
+            document.getElementById('tab-notlar').classList.add('active');
+            document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            notlariGetir();
+        } else if (tab === 'devamsizlik') {
+            document.getElementById('tab-devamsizlik').classList.add('active');
+            document.querySelectorAll('.tab-btn')[2].classList.add('active');
+            devamsizliklariGetir();
+        }
+    }
+    
+    danismanlariGoster();
+    dersSecenekleriniDoldur();
+</script>
+</body>
+</html>
